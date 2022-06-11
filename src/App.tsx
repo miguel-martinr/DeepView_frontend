@@ -1,16 +1,18 @@
 import { Route, Routes } from 'react-router-dom'
-import './App.css'
 import { HomePage } from './pages/HomePage'
+import { MainContainer } from './pages/MainContainer'
+import { VideosPage } from './pages/VideosPage'
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Hello world</h1>
         <Routes>
-          <Route path='/home' element={<HomePage />} />
+          <Route path='/' element={<MainContainer />}>
+            <Route path='/videos' element={<VideosPage />} />
+            <Route path='/*' element={<HomePage />} />
+            <Route path='/' element={<HomePage />} />
+          </Route>
         </Routes>
-      </header>
     </div>
   )
 }
