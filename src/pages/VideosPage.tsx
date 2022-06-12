@@ -32,7 +32,7 @@ export const VideosPage = () => {
   return (
     <>
       <h1>Vídeos</h1>
-      <p>Aquí están los vídeos disponibles en el servidor</p>
+      <p>Aquí puedes ver los vídeos que están disponibles en el servidor</p>
 
       <div>
         {
