@@ -1,8 +1,11 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
+
 import '../App.css'
 
 export const MainContainer = () => {
+
+
   return (
     <div>
       <header className="App-header">

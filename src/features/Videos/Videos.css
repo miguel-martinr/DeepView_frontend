@@ -1,0 +1,13 @@
+.video-row {
+    /* border gray */
+    border: 2px solid #e0e0e0;
+    border-radius: 5px;
+}
+
+.video-row img {
+    /* Short height image*/
+    background-color: gray;
+    height: 10vh;
+    max-height: 15vh;
+    max-width: 10vw;
+}
