@@ -5,28 +5,30 @@ import { VideoRow } from '../features/Videos'
 
 export interface Video {
   name: string,
-  size: string,
-  date: string,
-  duration: string,
+  size_in_bytes: number,
+  duration_in_seconds: number,
   fps: number,
-  resolution: string,
-  status: string,
+  // resolution: string,
+  // status: string,
 }
 
 export const VideosPage = () => {
   const [videos, setVideos] = useState<Video[]>([]);
 
+  const fetchVideos = async () => {
+    deepViewApi.fetchAvailableVideos().then(videos => {
+      console.log(videos);
+      setVideos(videos);
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+  
   useEffect(() => {
-    const fetchVideos = async () => {
-      deepViewApi.fetchAvailableVideos().then(videos => {
-        setVideos(videos);
-      }).catch(err => {
-        console.log(err);
-      });
-    }
+    console.log("heelo");
 
     fetchVideos();
-  })
+  }, []);
 
 
   return (

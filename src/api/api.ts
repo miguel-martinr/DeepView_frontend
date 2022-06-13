@@ -34,10 +34,31 @@ export class DeepViewApi {
   }
 
   async fetchAvailableVideos() {
-    const response = await this.http.get('/available-videos/');  
+    const response = await this.http.get('/available-videos/');
     return response.data;
   }
 
+  async processVideo(video_name: string) {
+    const response = await this.http.post('/process-video/', {
+      video_name
+    });
+    return response.data;
+  }
+
+  async checkVideoStatus(video_name: string) {
+    const response = await this.http.get('/check-status/', {
+      params: {
+        video_name,
+      }
+    });
+    console.log(response);
+    const {success, status, message} = response.data;
+    if (success) {
+      return status;
+    } else {
+      throw new Error(message);
+    }
+  }
 
 }
 
