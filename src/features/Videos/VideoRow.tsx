@@ -1,6 +1,8 @@
 import React, { useRef, useState } from 'react'
 import { Button, Col, Row } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
 import { deepViewApi } from '../../api/api'
+import { WorkspaceContext } from '../../App'
 import { Video } from '../../pages/VideosPage'
 import './Videos.css'
 
@@ -12,11 +14,12 @@ export type VIDEO_STATUS = 'PROCESSING' | 'PROCESSED' | 'STOPPED' | 'UNPROCESSED
 
 export const VideoRow = (props: VideoRowProps) => {
   const { video } = props;
+  const navigate = useNavigate();
 
   // Internal state
   const [status, setStatus] = useState<VIDEO_STATUS>("UNPROCESSED");
   const intervalRef = useRef<any>(null);
-
+  
 
 
   // Handlers
@@ -57,7 +60,11 @@ export const VideoRow = (props: VideoRowProps) => {
     console.log('Interval cleared --> ', intervalRef.current);
   }
 
-
+  const navigateToVideo = () => {
+    WorkspaceContext.
+    navigate(`/video/${video.name}`);
+  }
+  
 
   return (
     <Row className="video-row p-1 mt-1">
@@ -73,7 +80,7 @@ export const VideoRow = (props: VideoRowProps) => {
         </Row>
         <Row>
           <div className="btn-group" role="group" aria-label="Basic example">
-            <Button>Abrir</Button>
+            <Button onClick={() => navigateToVideo()}>Abrir</Button>
             <Button
               variant='success'
               onClick={status === 'PROCESSING' ? handleStopProcessing : handleProcess}
