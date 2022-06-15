@@ -34,8 +34,17 @@ export class DeepViewApi {
   }
 
   async fetchAvailableVideos() {
-    const response = await this.http.get('/available-videos/');
-    return response.data;
+    const response = await this.http.get('/video', {
+      params: {
+        action: 'list-available',
+      }
+    });
+    
+    if (response.data.success) {
+      return response.data.message;
+    } else {
+      throw new Error(response.data.message);
+    }
   }
 
   async processVideo(video_name: string) {
