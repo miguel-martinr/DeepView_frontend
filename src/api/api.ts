@@ -48,22 +48,43 @@ export class DeepViewApi {
   }
 
   async processVideo(video_name: string) {
-    const response = await this.http.post('/process-video/', {
-      video_name
+    const response = await this.http.post('/video', {
+      action: 'process',
+      payload: video_name,
     });
-    return response.data;
+
+    if (response.data.success) {
+      return response.data;
+    } else {
+      throw new Error(response.data.message);
+    }
+  }
+
+  async stopProcessing(video_name: string) {
+    const respone = await this.http.post('/video', {
+      action: 'stop',
+      payload: video_name,
+    });
+
+    if (respone.data.success) {
+      return respone.data.message;
+    } else {
+      throw new Error(respone.data.message);
+    }
   }
 
   async checkVideoStatus(video_name: string) {
-    const response = await this.http.get('/check-status/', {
+    const response = await this.http.get('/video', {
       params: {
-        video_name,
+        action: 'check-status',
+        video_name: video_name,
       }
     });
-    console.log(response);
-    const {success, status, message} = response.data;
+
+    
+    const {success, message} = response.data;
     if (success) {
-      return status;
+      return message;
     } else {
       throw new Error(message);
     }

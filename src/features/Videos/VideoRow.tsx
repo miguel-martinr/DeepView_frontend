@@ -8,11 +8,13 @@ interface VideoRowProps {
   video: Video
 }
 
+export type VIDEO_STATUS = 'PROCESSING' | 'PROCESSED' | 'STOPPED' | 'UNPROCESSED';
+
 export const VideoRow = (props: VideoRowProps) => {
   const { video } = props;
 
   // Internal state
-  const [status, setStatus] = useState<string>("UNPROCESSED");
+  const [status, setStatus] = useState<VIDEO_STATUS>("UNPROCESSED");
   const intervalRef = useRef<any>(null);
 
 
@@ -31,13 +33,20 @@ export const VideoRow = (props: VideoRowProps) => {
     });
   }
 
+  const handleStopProcessing = () => {
+    deepViewApi.stopProcessing(video.name).then((res: any) => {
+      setStatus("STOPPED");
+      clearInterval(intervalRef.current);
+    });
+  }
+
   const checkStatus = () => {
-    deepViewApi.checkVideoStatus(video.name).then((status: string) => {
+    deepViewApi.checkVideoStatus(video.name).then((status: VIDEO_STATUS) => {
       setStatus(status); 
       console.log(`Status checkef: ${status}`);
 
       
-      if (status === 'PROCESSED') {
+      if (status !== 'PROCESSING') {
         clearCheckStatusInterval();
       }     
     });
@@ -67,10 +76,10 @@ export const VideoRow = (props: VideoRowProps) => {
             <Button>Abrir</Button>
             <Button
               variant='success'
-              onClick={handleProcess}
-              disabled={status === "PROCESSING"}
+              onClick={status === 'PROCESSING' ? handleStopProcessing : handleProcess}
+              
             >
-              Procesar
+              {status === 'PROCESSING' ? 'Detener' : 'Procesar'}
             </Button>
             <Button disabled variant="warning">{status}</Button>
           </div>
