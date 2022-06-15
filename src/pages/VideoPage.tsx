@@ -1,8 +1,10 @@
 import React from 'react'
 import { Col, Container, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../api/api';
 import { useAppSelector } from '../app/hooks';
 import { VideoInfoCard } from '../features/VideoInfo/VideoInfoCard';
+import { VideoPlayer } from '../features/VideoPlayer/VideoPlayer';
 import { Video } from './VideosPage';
 
 export const VideoPage = () => {
@@ -14,11 +16,11 @@ export const VideoPage = () => {
 
   return (
     !video ? null :
-      <Container>
+      <Container className='p-5' fluid>
         <Row>
-          <Col>
+          <Col sm={4}>
             <Row>
-              <Col>Player</Col>
+              <Col><VideoPlayer src={BASE_URL + 'static/videos/' + video.name}/></Col>
             </Row>
             <Row>
               <Col><VideoInfoCard video={video}></VideoInfoCard></Col>

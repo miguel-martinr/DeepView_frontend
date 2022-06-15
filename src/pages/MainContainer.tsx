@@ -11,9 +11,7 @@ export const MainContainer = () => {
       <header className="App-header">
         <h1>DeepView</h1>
       </header>
-      <div className="container fluid mt-2">
-        <Outlet />
-      </div>
+      <Outlet />
     </div>
   )
 }

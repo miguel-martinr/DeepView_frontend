@@ -20,7 +20,7 @@ export const VideoInfoCard = (props: VideoInfoCardProps) => {
 
     const hoursStr = hours.toString().padStart(2, '0');
     const minutesStr = minutes.toString().padStart(2, '0');
-    const secondsStr = seconds.toFixed(0).toString().padStart(2, '0');
+    const secondsStr = Math.round(seconds).toString().padStart(2, '0');
 
     return `${hoursStr}:${minutesStr}:${secondsStr}`;
   }
@@ -40,7 +40,7 @@ export const VideoInfoCard = (props: VideoInfoCardProps) => {
         </InputGroup>
         <InputGroup>
           <InputGroup.Text>Tamaño</InputGroup.Text>          
-          <Form.Control type="text" value={video.size_in_MB.toFixed(4) + ' MB'} readOnly style={ inputStyle } />
+          <Form.Control type="text" value={Math.round(video.size_in_MB * 100) / 100 + ' MB'} readOnly style={ inputStyle } />
         </InputGroup>
       </Card.Body>
     </Card>

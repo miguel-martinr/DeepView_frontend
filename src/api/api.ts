@@ -20,13 +20,13 @@ function authenticate(config: AxiosRequestConfig<any>) {
 
 }
 
-
+export const BASE_URL = 'http://localhost:8000/'
 export class DeepViewApi {
   http: AxiosInstance;
 
   constructor() {
     this.http = axios.create({
-      baseURL: 'http://localhost:8000/deepcom/',
+      baseURL: BASE_URL + 'deepcom/',
       withCredentials: true,
     });
 
