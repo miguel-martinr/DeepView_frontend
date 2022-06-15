@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosInterceptorManager, AxiosRequestConfig } from 'axios'
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
 
 
 function authenticate(config: AxiosRequestConfig<any>) {
