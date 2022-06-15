@@ -5,7 +5,7 @@ import { BASE_URL } from '../api/api';
 import { useAppSelector } from '../app/hooks';
 import { VideoInfoCard } from '../features/VideoInfo/VideoInfoCard';
 import { VideoPlayer } from '../features/VideoPlayer/VideoPlayer';
-import { Video } from './VideosPage';
+
 
 export const VideoPage = () => {
 
