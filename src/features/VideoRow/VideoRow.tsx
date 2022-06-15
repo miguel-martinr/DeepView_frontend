@@ -2,8 +2,10 @@ import React, { useRef, useState } from 'react'
 import { Button, Col, Row } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import { deepViewApi } from '../../api/api'
-import { WorkspaceContext } from '../../App'
+import { useAppDispatch } from '../../app/hooks'
+
 import { Video } from '../../pages/VideosPage'
+import { setVideo } from '../../state/workspace-slice'
 import './Videos.css'
 
 interface VideoRowProps {
@@ -13,10 +15,11 @@ interface VideoRowProps {
 export type VIDEO_STATUS = 'PROCESSING' | 'PROCESSED' | 'STOPPED' | 'UNPROCESSED';
 
 export const VideoRow = (props: VideoRowProps) => {
+  // Internal state
   const { video } = props;
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
-  // Internal state
   const [status, setStatus] = useState<VIDEO_STATUS>("UNPROCESSED");
   const intervalRef = useRef<any>(null);
   
@@ -61,7 +64,7 @@ export const VideoRow = (props: VideoRowProps) => {
   }
 
   const navigateToVideo = () => {
-    WorkspaceContext.
+    dispatch(setVideo(video));
     navigate(`/video/${video.name}`);
   }
   

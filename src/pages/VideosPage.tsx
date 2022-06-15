@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { deepViewApi } from '../api/api';
-import { VideoRow } from '../features/Videos'
+import { VideoRow } from '../features/VideoRow'
 
 
 export interface Video {
   name: string,
-  size_in_bytes: number,
+  size_in_MB: number,
   duration_in_seconds: number,
   fps: number,
   // resolution: string,
