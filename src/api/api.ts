@@ -39,7 +39,7 @@ export class DeepViewApi {
         action: 'list-available',
       }
     });
-    
+
     if (response.data.success) {
       return response.data.message;
     } else {
@@ -81,13 +81,30 @@ export class DeepViewApi {
       }
     });
 
-    
-    const {success, message} = response.data;
+
+    const { success, message } = response.data;
     if (success) {
       return message;
     } else {
       throw new Error(message);
     }
+  }
+
+  async fetchVideoData(video_name: string) {
+    const response = await this.http.get('/video', {
+      params: {
+        action: 'get-data',
+        video_name,
+        params: '',
+      }
+    });
+
+    if (response.data.success) {
+      return response.data.message;
+    } else {
+      throw new Error(response.data.message);
+    }
+
   }
 
 }

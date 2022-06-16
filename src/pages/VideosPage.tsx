@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { deepViewApi } from '../api/api';
 import { VideoRow } from '../features/VideoRow'
 
-
+import Chart from 'chart.js/auto'
 export interface Video {
   name: string,
   size_in_MB: number,
@@ -16,6 +16,7 @@ export const VideosPage = () => {
   const [videos, setVideos] = useState<Video[]>([]);
 
   const fetchVideos = async () => {
+    (window as any).chart = Chart
     deepViewApi.fetchAvailableVideos().then(videos => {
       console.log(videos);
       setVideos(videos);
