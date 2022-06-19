@@ -65,15 +65,13 @@ export const VideoPage = () => {
             <BarChart              
               height={100}
               
-              data={{
-                // labels: ['1', '2'],
+              data={{                
                 labels: videoData.frames.map((frame, i) => i),
                 datasets: [
                   {
                     label: 'Partículas',
                     backgroundColor: '#f87979',
-                    data: videoData.frames.map(frame => frame.particles.length)
-                    // data: [20, 34]
+                    data: videoData.frames.map(frame => frame.particles.length)                    
                   }
                 ]
               }}
