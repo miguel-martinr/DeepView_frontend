@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { Col, Container, Row } from 'react-bootstrap';
+import { Col, Container, Row, Spinner } from 'react-bootstrap';
 import { BASE_URL, deepViewApi } from '../api/api';
 import { useAppSelector } from '../app/hooks';
 import { BarChart } from '../features/Charts/BarChart';
+import { StatusButton } from '../features/StatusButton/StatusButton';
 import { VideoInfoCard } from '../features/VideoInfo/VideoInfoCard';
 import { VideoPlayer } from '../features/VideoPlayer/VideoPlayer';
 
@@ -27,11 +28,11 @@ export const VideoPage = () => {
 
   // Internal state
   const video = useAppSelector(({ workspace }) => workspace.video);
-  
-  
-  
+
+
+
   const [videoData, setVideoData] = useState<VideoData>({ frames: [] });
-  
+
 
 
   useEffect(() => {
@@ -61,22 +62,29 @@ export const VideoPage = () => {
             </Row>
           </Col>
           <Col sm={8}>
+            <Row>
+              <Col className='text-end'>
+                <StatusButton status={'processed'}/>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <BarChart
+                  height={100}
 
-            <BarChart              
-              height={100}
-              
-              data={{                
-                labels: videoData.frames.map((frame, i) => i),
-                datasets: [
-                  {
-                    label: 'Partículas',
-                    backgroundColor: '#f87979',
-                    data: videoData.frames.map(frame => frame.particles.length)                    
-                  }
-                ]
-              }}
-            />
-
+                  data={{
+                    labels: videoData.frames.map((frame, i) => i),
+                    datasets: [
+                      {
+                        label: 'Partículas',
+                        backgroundColor: '#f87979',
+                        data: videoData.frames.map(frame => frame.particles.length)
+                      }
+                    ]
+                  }}
+                />
+              </Col>
+            </Row>
           </Col>
         </Row>
       </Container>
