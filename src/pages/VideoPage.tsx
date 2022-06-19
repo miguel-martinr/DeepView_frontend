@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Col, Container, Row } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
 import { BASE_URL, deepViewApi } from '../api/api';
 import { useAppSelector } from '../app/hooks';
 import { BarChart } from '../features/Charts/BarChart';
@@ -29,7 +28,7 @@ export const VideoPage = () => {
   // Internal state
   const video = useAppSelector(({ workspace }) => workspace.video);
   
-  const videoName  = useParams().name; 
+  
   
   const [videoData, setVideoData] = useState<VideoData>({ frames: [] });
   
