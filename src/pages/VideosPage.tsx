@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { deepViewApi } from '../api/api';
 import { VideoRow } from '../features/VideoRow'
-
-import Chart from 'chart.js/auto'
-import { Container } from 'react-bootstrap';
+import './styles.css'
+import { Col, Container, Row, Spinner } from 'react-bootstrap';
 
 export type VideoStatus = 'processing' | 'processed' | 'stopped' | 'unprocessed';
 export interface Video {
@@ -16,33 +15,45 @@ export interface Video {
 }
 
 export const VideosPage = () => {
+
+  // Internal state
   const [videos, setVideos] = useState<Video[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const fetchVideos = async () => {
-    (window as any).chart = Chart
-    deepViewApi.fetchAvailableVideos().then(videos => {
-      console.log(videos);
-      setVideos(videos);
-    }).catch(err => {
-      console.log(err);
-    });
-  }
-  
+
   useEffect(() => {
-    console.log("heelo");
-
     fetchVideos();
   }, []);
 
 
+  // Handlers
+  const fetchVideos = async () => {
+    setIsLoading(true);
+    deepViewApi.fetchAvailableVideos().then(videos => {
+      console.log(videos);
+      setVideos(videos);
+      setIsLoading(false);
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+
+
+
   return (
     <>
-      <h1>Vídeos</h1>
-      <p>Aquí puedes ver los vídeos que están disponibles en el servidor</p>
+      <Container className='mb-5'>
+        <Row className='mt-2'>
+          <Col>
+            <h1>Vídeos</h1>
+          </Col>
+        </Row>
+        <p>Aquí puedes ver los vídeos que están disponibles en el servidor</p>
 
-      <Container  className='mb-5'>
         {
-          videos.map(v => <VideoRow key={v.name} video={v}/>)
+          isLoading ?
+            <div  className='centered'> <Spinner variant='primary' animation='grow' /></div> :
+            videos.map(v => <VideoRow key={v.name} video={v} />)
         }
       </Container>
     </>
