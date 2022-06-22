@@ -1,3 +1,4 @@
+import { ChartData } from 'chart.js';
 import React, { useEffect, useState } from 'react'
 import { Col, Container, Row, Spinner } from 'react-bootstrap';
 import { BASE_URL, deepViewApi } from '../api/api';
@@ -6,6 +7,7 @@ import { BarChart } from '../features/Charts/BarChart';
 import { StatusButton } from '../features/StatusButton/StatusButton';
 import { VideoInfoCard } from '../features/VideoInfo/VideoInfoCard';
 import { VideoPlayer } from '../features/VideoPlayer/VideoPlayer';
+import { getFormattedTime } from '../utils/time';
 
 
 interface Particle {
@@ -31,8 +33,17 @@ export const VideoPage = () => {
 
 
 
-  const [videoData, setVideoData] = useState<VideoData>({ frames: [] });
-
+  const [videoData, setVideoData] = useState({ frames: [], particlesAverage: [] });
+  const [visibleData, setVisibleData] = useState<ChartData<"bar", (number | null)[], unknown>>({
+    labels: [],
+    datasets: [
+      {
+        label: '',
+        backgroundColor: '#f87979',
+        data: []
+      }
+    ]
+  });
 
 
   useEffect(() => {
@@ -42,8 +53,19 @@ export const VideoPage = () => {
   // Handlers
   const fetchData = async () => {
     if (!video) return;
-    deepViewApi.fetchVideoData(video.name)
-      .then(data => setVideoData(data))
+    deepViewApi.fetchParticlesAverageQuantity(video.name, 'minutes')
+      .then((data: number[]) => {
+        setVisibleData({
+          labels: data.map((_, i) => getFormattedTime(i)),
+          datasets: [
+            {
+              label: 'Media de partículas por frame',
+              backgroundColor: '#f87979',
+              data,
+            }
+          ]
+        });
+      })
       .catch(err => console.warn(err.message));
   }
 
@@ -55,7 +77,7 @@ export const VideoPage = () => {
         <Row>
           <Col sm={4}>
             <Row>
-              <Col><VideoPlayer src={BASE_URL + 'static/videos/' + video.name} /></Col>
+              <Col><VideoPlayer src={deepViewApi.http.getUri() + 'videos/' + video.name} /></Col>
             </Row>
             <Row>
               <Col><VideoInfoCard video={video}></VideoInfoCard></Col>
@@ -64,7 +86,7 @@ export const VideoPage = () => {
           <Col sm={8}>
             <Row>
               <Col className='text-end'>
-                <StatusButton status={'processed'}/>
+                <StatusButton status={video.status} />
               </Col>
             </Row>
             <Row>
@@ -72,16 +94,7 @@ export const VideoPage = () => {
                 <BarChart
                   height={100}
 
-                  data={{
-                    labels: videoData.frames.map((frame, i) => i),
-                    datasets: [
-                      {
-                        label: 'Partículas',
-                        backgroundColor: '#f87979',
-                        data: videoData.frames.map(frame => frame.particles.length)
-                      }
-                    ]
-                  }}
+                  data={visibleData}
                 />
               </Col>
             </Row>

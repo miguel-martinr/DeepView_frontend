@@ -4,15 +4,14 @@ import { useNavigate } from 'react-router-dom'
 import { deepViewApi } from '../../api/api'
 import { useAppDispatch } from '../../app/hooks'
 
-import { Video } from '../../pages/VideosPage'
+import { Video, VideoStatus } from '../../pages/VideosPage'
 import { setVideo } from '../../state/workspace-slice'
+import { StatusButton } from '../StatusButton/StatusButton'
 import './Videos.css'
 
 interface VideoRowProps {
   video: Video
 }
-
-export type VIDEO_STATUS = 'PROCESSING' | 'PROCESSED' | 'STOPPED' | 'UNPROCESSED';
 
 export const VideoRow = (props: VideoRowProps) => {
   // Internal state
@@ -20,7 +19,7 @@ export const VideoRow = (props: VideoRowProps) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const [status, setStatus] = useState<VIDEO_STATUS>("UNPROCESSED");
+  const [status, setStatus] = useState<VideoStatus>(video.status);
   const intervalRef = useRef<any>(null);
   
 
@@ -28,31 +27,30 @@ export const VideoRow = (props: VideoRowProps) => {
   // Handlers
   const handleProcess = () => {
     deepViewApi.processVideo(video.name).then((res: any) => {
-      setStatus("PROCESSING");
+      setStatus('processing');
       
       intervalRef.current = setInterval(() => {
         checkStatus();
       }, 5000);
-
-      console.log("INTERVAL : ", intervalRef.current);
+      
       console.log(res);
     });
   }
 
   const handleStopProcessing = () => {
     deepViewApi.stopProcessing(video.name).then((res: any) => {
-      setStatus("STOPPED");
+      setStatus("stopped");
       clearInterval(intervalRef.current);
     });
   }
 
   const checkStatus = () => {
-    deepViewApi.checkVideoStatus(video.name).then((status: VIDEO_STATUS) => {
+    deepViewApi.checkVideoStatus(video.name).then((status: VideoStatus) => {
       setStatus(status); 
       console.log(`Status checkef: ${status}`);
 
       
-      if (status !== 'PROCESSING') {
+      if (status !== 'processing') {
         clearCheckStatusInterval();
       }     
     });
@@ -80,16 +78,19 @@ export const VideoRow = (props: VideoRowProps) => {
           <Col>
             <h5>{video.name}</h5>
           </Col>
+          <Col className='text-end m-1'>
+            <StatusButton status={status} />
+          </Col>
         </Row>
         <Row>
           <div className="btn-group" role="group" aria-label="Basic example">
             <Button onClick={() => navigateToVideo()}>Abrir</Button>
             <Button
               variant='success'
-              onClick={status === 'PROCESSING' ? handleStopProcessing : handleProcess}
+              onClick={status === 'processing' ? handleStopProcessing : handleProcess}
               
             >
-              {status === 'PROCESSING' ? 'Detener' : 'Procesar'}
+              {status === 'processing' ? 'Detener' : 'Procesar'}
             </Button>
             <Button disabled variant="warning">{status}</Button>
           </div>

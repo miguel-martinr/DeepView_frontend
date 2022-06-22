@@ -1,6 +1,7 @@
 import React from 'react'
 import { Card, Form, InputGroup } from 'react-bootstrap'
 import { Video } from '../../pages/VideosPage'
+import { getFormattedTime } from '../../utils/time'
 import './styles.css'
 
 export interface VideoInfoCardProps {
@@ -14,15 +15,7 @@ export const VideoInfoCard = (props: VideoInfoCardProps) => {
 
   // Handlers
   const getFormattedDuration = (durationInSeconds: number) => {
-    const hours = Math.floor(durationInSeconds / 3600);
-    const minutes = Math.floor((durationInSeconds - hours * 3600) / 60);
-    const seconds = durationInSeconds - hours * 3600 - minutes * 60;
-
-    const hoursStr = hours.toString().padStart(2, '0');
-    const minutesStr = minutes.toString().padStart(2, '0');
-    const secondsStr = Math.round(seconds).toString().padStart(2, '0');
-
-    return `${hoursStr}:${minutesStr}:${secondsStr}`;
+    return getFormattedTime(durationInSeconds);
   }
 
 

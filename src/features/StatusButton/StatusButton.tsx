@@ -1,8 +1,9 @@
 import React from 'react'
 import { Button, Spinner } from 'react-bootstrap'
+import { VideoStatus } from '../../pages/VideosPage'
 
 export interface StatusButtonProps {
-  status: 'processing' | 'processed' | 'unprocessed'
+  status: VideoStatus
 }
 
 export const StatusButton = ({ status }: StatusButtonProps) => {
@@ -11,6 +12,7 @@ export const StatusButton = ({ status }: StatusButtonProps) => {
     processing: { message: 'Procesando', color: 'warning', buttonVariant: '' },
     processed: { message: 'Procesado', color: 'success', buttonVariant: 'success' },
     unprocessed: { message: 'No procesado', color: 'danger', buttonVariant: 'danger' },
+    stopped: {message: 'Detenido', color: 'secondary', buttonVariant: 'secondary'}
   }
 
   return (
