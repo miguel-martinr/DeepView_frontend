@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { deepViewApi } from '../api/api';
 import { VideoRow } from '../features/VideoRow'
 import './styles.css'
-import { Col, Container, Row, Spinner } from 'react-bootstrap';
+import { Col, Collapse, Container, Fade, Row, Spinner } from 'react-bootstrap';
 
 export type VideoStatus = 'processing' | 'processed' | 'stopped' | 'unprocessed';
 export interface Video {
@@ -19,7 +19,7 @@ export const VideosPage = () => {
   // Internal state
   const [videos, setVideos] = useState<Video[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     fetchVideos();
@@ -52,9 +52,13 @@ export const VideosPage = () => {
 
         {
           isLoading ?
-            <div  className='centered'> <Spinner variant='primary' animation='grow' /></div> :
-            videos.map(v => <VideoRow key={v.name} video={v} />)
+            <div className='centered'> <Spinner variant='primary' animation='grow' /></div> : null
         }
+            <Fade in={!isLoading}>
+              <Row>
+                {videos.map(v => <VideoRow key={v.name} video={v} />)}
+              </Row>
+            </Fade>
       </Container>
     </>
   )

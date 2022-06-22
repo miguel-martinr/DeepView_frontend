@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Spinner } from 'react-bootstrap'
 import { VideoStatus } from '../../pages/VideosPage'
-
+import './styles.css'
 export interface StatusButtonProps {
   status: VideoStatus
 }
@@ -16,7 +16,7 @@ export const StatusButton = ({ status }: StatusButtonProps) => {
   }
 
   return (
-    <Button variant={StatusType[status].buttonVariant} >
+    <Button className='status-button' variant={StatusType[status].buttonVariant} >
       {status === 'processing' ?
         <Spinner
           as="span"

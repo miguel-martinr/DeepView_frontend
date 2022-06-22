@@ -21,18 +21,18 @@ export const VideoRow = (props: VideoRowProps) => {
 
   const [status, setStatus] = useState<VideoStatus>(video.status);
   const intervalRef = useRef<any>(null);
-  
+
 
 
   // Handlers
   const handleProcess = () => {
     deepViewApi.processVideo(video.name).then((res: any) => {
       setStatus('processing');
-      
+
       intervalRef.current = setInterval(() => {
         checkStatus();
       }, 5000);
-      
+
       console.log(res);
     });
   }
@@ -46,13 +46,13 @@ export const VideoRow = (props: VideoRowProps) => {
 
   const checkStatus = () => {
     deepViewApi.checkVideoStatus(video.name).then((status: VideoStatus) => {
-      setStatus(status); 
+      setStatus(status);
       console.log(`Status checkef: ${status}`);
 
-      
+
       if (status !== 'processing') {
         clearCheckStatusInterval();
-      }     
+      }
     });
   }
 
@@ -65,35 +65,33 @@ export const VideoRow = (props: VideoRowProps) => {
     dispatch(setVideo(video));
     navigate(`/video/${video.name}`);
   }
-  
+
 
   return (
     <Row className="video-row p-1 mt-1">
-      <Col sm={1}>
-        <img className="card-img" src="src/favicon.svg" alt="" />
-      </Col>
+
       {/* d-flex flex-column justify-content-center  */}
       <Col>
         <Row>
           <Col>
             <h5>{video.name}</h5>
           </Col>
-          <Col className='text-end m-1'>
+          <Col className='text-end'>
             <StatusButton status={status} />
           </Col>
         </Row>
         <Row>
-          <div className="btn-group" role="group" aria-label="Basic example">
-            <Button onClick={() => navigateToVideo()}>Abrir</Button>
-            <Button
-              variant='success'
-              onClick={status === 'processing' ? handleStopProcessing : handleProcess}
-              
-            >
-              {status === 'processing' ? 'Detener' : 'Procesar'}
-            </Button>
-            <Button disabled variant="warning">{status}</Button>
-          </div>
+          <Col sm={12}>
+            <div className="btn-group" role="group" aria-label="Basic example">
+              <Button onClick={() => navigateToVideo()}>Abrir</Button>
+              <Button
+                variant='success'
+                onClick={status === 'processing' ? handleStopProcessing : handleProcess}
+              >
+                {status === 'processing' ? 'Detener' : 'Procesar'}
+              </Button>
+            </div>
+          </Col>
         </Row>
       </Col>
     </Row>

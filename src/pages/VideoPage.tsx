@@ -53,7 +53,7 @@ export const VideoPage = () => {
   // Handlers
   const fetchData = async () => {
     if (!video) return;
-    deepViewApi.fetchParticlesAverageQuantity(video.name, 'minutes')
+    deepViewApi.fetchParticlesAverageQuantity(video.name, 'seconds')
       .then((data: number[]) => {
         setVisibleData({
           labels: data.map((_, i) => getFormattedTime(i)),
