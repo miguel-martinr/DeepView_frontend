@@ -1,16 +1,27 @@
 import React from 'react'
-import { Outlet } from 'react-router-dom'
+import { Button, Col, Container, Row } from 'react-bootstrap'
+import { Outlet, useNavigate } from 'react-router-dom'
 
 import '../App.css'
 
 export const MainContainer = () => {
 
+  const navigate = useNavigate();
 
   return (
     <div>
-      <header className="App-header">
-        <h1>DeepView</h1>
-      </header>
+      <Container fluid>
+        <header className="App-header">
+          <Row>
+            <Col className='text-start' sm={1}>
+              <Button onClick={() => navigate(-1)}>{'<'}</Button>
+            </Col>
+            <Col className='text-center'>
+              <h1>DeepView</h1>
+            </Col>
+          </Row>
+        </header>
+      </Container>
       <Outlet />
     </div>
   )
