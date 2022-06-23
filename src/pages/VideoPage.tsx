@@ -1,6 +1,6 @@
 import { ChartData } from 'chart.js';
 import React, { useEffect, useState } from 'react'
-import { Col, Container, Row, Spinner } from 'react-bootstrap';
+import { Button, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BASE_URL, deepViewApi } from '../api/api';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
@@ -46,6 +46,7 @@ export const VideoPage = () => {
 
   // Internal state
   const video = useAppSelector(({ workspace }) => workspace.videos[name]);
+  const [fetchingData, setFetchingData] = useState(false);
 
   if (!video) {
     navigate(-1);
@@ -79,8 +80,9 @@ export const VideoPage = () => {
   // Handlers
   const fetchData = async () => {
     if (!video) return;
+    setFetchingData(true);
     deepViewApi.fetchParticlesAverageQuantity(video.name, 'seconds')
-      .then((data: number[]) => {
+      .then((data: number[]) => {        
         setVisibleData({
           labels: data.map((_, i) => getFormattedTime(i)),
           datasets: [
@@ -92,7 +94,20 @@ export const VideoPage = () => {
           ]
         });
       })
-      .catch(err => console.warn(err.message));
+      .catch(err => {
+        console.warn(err.message)
+        setVisibleData({
+          labels: [],
+          datasets: [
+            {
+              label: '',
+              backgroundColor: '#f87979',
+              data: []
+            }
+          ]
+        })
+      })
+      .finally(() => setFetchingData(false));
   }
 
   const watchStatus = () => {
@@ -110,8 +125,6 @@ export const VideoPage = () => {
     dispatch(setVideo(updatedVideo));
   }
 
-
-
   return (
     !video ? null :
       <Container className='p-5' fluid>
@@ -126,7 +139,12 @@ export const VideoPage = () => {
           </Col>
           <Col sm={8}>
             <Row>
-              <Col className='text-end'>
+              <Col className='text-end' sm={{span: 3, offset: 6}}>
+              <Button onClick={() => fetchData()}>
+                {fetchingData ? <Spinner animation='border' size='sm' /> : 'Actualizar'}
+                </Button>
+              </Col>
+              <Col className='text-end' sm={3}>
                 <StatusButton status={video.status} />
               </Col>
             </Row>
