@@ -1,13 +1,17 @@
 import { ChartData } from 'chart.js';
 import React, { useEffect, useState } from 'react'
 import { Col, Container, Row, Spinner } from 'react-bootstrap';
+import { useNavigate, useParams } from 'react-router-dom';
 import { BASE_URL, deepViewApi } from '../api/api';
-import { useAppSelector } from '../app/hooks';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { BarChart } from '../features/Charts/BarChart';
 import { StatusButton } from '../features/StatusButton/StatusButton';
 import { VideoInfoCard } from '../features/VideoInfo/VideoInfoCard';
 import { VideoPlayer } from '../features/VideoPlayer/VideoPlayer';
+import { setVideo } from '../state/workspace-slice';
+import { StatusWatcher } from '../utils/fetch';
 import { getFormattedTime } from '../utils/time';
+import { VideoStatus } from './VideosPage';
 
 
 interface Particle {
@@ -28,12 +32,29 @@ interface VideoData {
 
 export const VideoPage = () => {
 
+  const navigate = useNavigate();
+  
+  const { name } = useParams();
+  if (!name) {
+    navigate(-1);
+    alert('No se ha encontrado el vídeo :(');
+    return null;
+  }
+  
+  const dispatch = useAppDispatch();
+  
+
   // Internal state
-  const video = useAppSelector(({ workspace }) => workspace.video);
+  const video = useAppSelector(({ workspace }) => workspace.videos[name]);
 
+  if (!video) {
+    navigate(-1);
+    alert('No se ha encontrado el vídeo :(');
+    return null;
+  }
 
+  const statusWatcher = new StatusWatcher({ autoClear: false, currentStatus: video.status })
 
-  const [videoData, setVideoData] = useState({ frames: [], particlesAverage: [] });
   const [visibleData, setVisibleData] = useState<ChartData<"bar", (number | null)[], unknown>>({
     labels: [],
     datasets: [
@@ -48,6 +69,11 @@ export const VideoPage = () => {
 
   useEffect(() => {
     fetchData();
+    watchStatus();
+
+    return () => {
+      statusWatcher.clear();
+    }
   }, [])
 
   // Handlers
@@ -67,6 +93,21 @@ export const VideoPage = () => {
         });
       })
       .catch(err => console.warn(err.message));
+  }
+
+  const watchStatus = () => {
+    statusWatcher.addEventListener('statusChanged', (e) => {
+      const ev = e as CustomEvent;
+      setStatus(ev.detail);
+    });
+
+    statusWatcher.startWatching(video.name);
+  }
+
+  const setStatus = (status: VideoStatus) => {
+    const updatedVideo = JSON.parse(JSON.stringify(video));
+    updatedVideo.status = status;
+    dispatch(setVideo(updatedVideo));
   }
 
 

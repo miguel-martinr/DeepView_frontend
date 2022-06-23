@@ -34,8 +34,6 @@ export class StatusWatcher extends EventTarget {
         }));
         if (obj.config.autoClear)
           clearInterval(interval);
-        else
-          obj.config.currentStatus = status;
       }
     }, obj.config.seconds * 1000)
 
