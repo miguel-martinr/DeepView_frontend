@@ -32,21 +32,6 @@ export const VideosPage = () => {
     fetchVideos();
   }, []);
 
-  useEffect(() => {
-    Object.values(videos).filter(v => v.status === 'processing')
-      .forEach((v, i) => {
-        const watcher = new StatusWatcher();
-        watcher.addEventListener('statusChanged', function (e) {
-          const customEvent = e as CustomEvent;
-          const updatedVideo: Video = JSON.parse(JSON.stringify(v));
-          updatedVideo.status = customEvent.detail;
-          dispatch(setVideo(updatedVideo));
-          console.log('ok');
-        })
-        watcher.startWatching(v.name);
-      })
-
-  }, [videos]);
 
   // Handlers
   const fetchVideos = async () => {

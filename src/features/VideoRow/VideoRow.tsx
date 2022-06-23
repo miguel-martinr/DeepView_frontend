@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Button, Col, Row } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import { deepViewApi } from '../../api/api'
@@ -24,48 +24,42 @@ export const VideoRow = ({ name }: VideoRowProps) => {
   // Internal state
   const navigate = useNavigate();
   const intervalRef = useRef<any>(null);
+  const watcher = new StatusWatcher({ autoClear: false, currentStatus: video.status, });
 
+  useEffect(() => {
+    wacthStatus();
+
+    return () => watcher.clear();
+  }, [])
 
 
   // Handlers
   const handleProcess = () => {
     deepViewApi.processVideo(video.name).then((res: any) => {
-      
       setStatus('processing');
-      const watcher = new StatusWatcher();
-      watcher.addEventListener('statusChanged', (e) => {
-        const ev = e as CustomEvent;
-        setStatus(ev.detail);
-      });
-
-      watcher.startWatching(video.name);
+      watcher.setCurrentStatus('processing');
       console.log(res);
     });
   }
 
   const handleStopProcessing = () => {
     deepViewApi.stopProcessing(video.name).then((res: any) => {
+      console.log('stopping')
       setStatus("stopped");
-      clearInterval(intervalRef.current);
     });
   }
 
-  const checkStatus = () => {
-    deepViewApi.checkVideoStatus(video.name).then((status: VideoStatus) => {
-      setStatus(status);
-      console.log(`Status checkef: ${status}`);
+  const wacthStatus = () => {
 
-
-      if (status !== 'processing') {
-        clearCheckStatusInterval();
-      }
+    watcher.addEventListener('statusChanged', (e) => {
+      const ev = e as CustomEvent;
+      setStatus(ev.detail);
     });
+
+    watcher.startWatching(video.name);
   }
 
-  const clearCheckStatusInterval = () => {
-    clearInterval(intervalRef.current);
-    console.log('Interval cleared --> ', intervalRef.current);
-  }
+
 
   const navigateToVideo = () => {
     dispatch(setCurrentVideo(video));
@@ -73,7 +67,7 @@ export const VideoRow = ({ name }: VideoRowProps) => {
   }
 
   const setStatus = (status: VideoStatus) => {
-    const updatedVideo  = JSON.parse(JSON.stringify(video));
+    const updatedVideo = JSON.parse(JSON.stringify(video));
     updatedVideo.status = status;
     dispatch(setVideo(updatedVideo));
   }
@@ -96,10 +90,12 @@ export const VideoRow = ({ name }: VideoRowProps) => {
             <div className="btn-group" role="group" aria-label="Basic example">
               <Button onClick={() => navigateToVideo()}>Abrir</Button>
               <Button
+                disabled={video.status === 'stopped'}
                 variant='success'
                 onClick={video.status === 'processing' ? handleStopProcessing : handleProcess}
               >
                 {video.status === 'processing' ? 'Detener' : 'Procesar'}
+
               </Button>
             </div>
           </Col>
