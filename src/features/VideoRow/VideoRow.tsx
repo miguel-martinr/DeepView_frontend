@@ -2,24 +2,27 @@ import React, { useRef, useState } from 'react'
 import { Button, Col, Row } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import { deepViewApi } from '../../api/api'
-import { useAppDispatch } from '../../app/hooks'
+import { useAppDispatch, useAppSelector } from '../../app/hooks'
 
 import { Video, VideoStatus } from '../../pages/VideosPage'
-import { setVideo } from '../../state/workspace-slice'
+import { setCurrentVideo, setVideo } from '../../state/workspace-slice'
+import { StatusWatcher } from '../../utils/fetch'
 import { StatusButton } from '../StatusButton/StatusButton'
 import './Videos.css'
 
 interface VideoRowProps {
-  video: Video
+  name: string
 }
 
-export const VideoRow = (props: VideoRowProps) => {
-  // Internal state
-  const { video } = props;
-  const navigate = useNavigate();
+export const VideoRow = ({ name }: VideoRowProps) => {
+  // Global state
+  const video = useAppSelector(({ workspace }) => workspace.videos[name]);
   const dispatch = useAppDispatch();
 
-  const [status, setStatus] = useState<VideoStatus>(video.status);
+  if (!video) return null;
+
+  // Internal state
+  const navigate = useNavigate();
   const intervalRef = useRef<any>(null);
 
 
@@ -27,12 +30,15 @@ export const VideoRow = (props: VideoRowProps) => {
   // Handlers
   const handleProcess = () => {
     deepViewApi.processVideo(video.name).then((res: any) => {
+      
       setStatus('processing');
+      const watcher = new StatusWatcher();
+      watcher.addEventListener('statusChanged', (e) => {
+        const ev = e as CustomEvent;
+        setStatus(ev.detail);
+      });
 
-      intervalRef.current = setInterval(() => {
-        checkStatus();
-      }, 5000);
-
+      watcher.startWatching(video.name);
       console.log(res);
     });
   }
@@ -62,10 +68,15 @@ export const VideoRow = (props: VideoRowProps) => {
   }
 
   const navigateToVideo = () => {
-    dispatch(setVideo(video));
+    dispatch(setCurrentVideo(video));
     navigate(`/video/${video.name}`);
   }
 
+  const setStatus = (status: VideoStatus) => {
+    const updatedVideo  = JSON.parse(JSON.stringify(video));
+    updatedVideo.status = status;
+    dispatch(setVideo(updatedVideo));
+  }
 
   return (
     <Row className="video-row p-1 mt-1">
@@ -77,7 +88,7 @@ export const VideoRow = (props: VideoRowProps) => {
             <h5>{video.name}</h5>
           </Col>
           <Col className='text-end'>
-            <StatusButton status={status} />
+            <StatusButton status={video.status} />
           </Col>
         </Row>
         <Row>
@@ -86,9 +97,9 @@ export const VideoRow = (props: VideoRowProps) => {
               <Button onClick={() => navigateToVideo()}>Abrir</Button>
               <Button
                 variant='success'
-                onClick={status === 'processing' ? handleStopProcessing : handleProcess}
+                onClick={video.status === 'processing' ? handleStopProcessing : handleProcess}
               >
-                {status === 'processing' ? 'Detener' : 'Procesar'}
+                {video.status === 'processing' ? 'Detener' : 'Procesar'}
               </Button>
             </div>
           </Col>

@@ -3,6 +3,9 @@ import { deepViewApi } from '../api/api';
 import { VideoRow } from '../features/VideoRow'
 import './styles.css'
 import { Col, Collapse, Container, Fade, Row, Spinner } from 'react-bootstrap';
+import { StatusWatcher } from '../utils/fetch';
+import { setCurrentVideo, setVideo, setVideos } from '../state/workspace-slice';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
 
 export type VideoStatus = 'processing' | 'processed' | 'stopped' | 'unprocessed';
 export interface Video {
@@ -16,8 +19,12 @@ export interface Video {
 
 export const VideosPage = () => {
 
+  // Global state
+  const videos = useAppSelector(({ workspace }) => workspace.videos);
+  const dispatch = useAppDispatch();
+
+
   // Internal state
-  const [videos, setVideos] = useState<Video[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [visible, setVisible] = useState(false);
 
@@ -25,18 +32,33 @@ export const VideosPage = () => {
     fetchVideos();
   }, []);
 
+  useEffect(() => {
+    Object.values(videos).filter(v => v.status === 'processing')
+      .forEach((v, i) => {
+        const watcher = new StatusWatcher();
+        watcher.addEventListener('statusChanged', function (e) {
+          const customEvent = e as CustomEvent;
+          const updatedVideo: Video = JSON.parse(JSON.stringify(v));
+          updatedVideo.status = customEvent.detail;
+          dispatch(setVideo(updatedVideo));
+          console.log('ok');
+        })
+        watcher.startWatching(v.name);
+      })
+
+  }, [videos]);
 
   // Handlers
   const fetchVideos = async () => {
     setIsLoading(true);
-    deepViewApi.fetchAvailableVideos().then(videos => {
-      console.log(videos);
-      setVideos(videos);
+    deepViewApi.fetchAvailableVideos().then((fetchedVideos: Video[]) => {      
+      dispatch(setVideos(fetchedVideos));
       setIsLoading(false);
     }).catch(err => {
       console.log(err);
     });
   }
+
 
 
 
@@ -54,11 +76,11 @@ export const VideosPage = () => {
           isLoading ?
             <div className='centered'> <Spinner variant='primary' animation='grow' /></div> : null
         }
-            <Fade in={!isLoading}>
-              <Row>
-                {videos.map(v => <VideoRow key={v.name} video={v} />)}
-              </Row>
-            </Fade>
+        <Fade in={!isLoading}>
+          <Row>
+            {Object.values(videos).map(v => <VideoRow key={v.name} name={v.name} />)}
+          </Row>
+        </Fade>
       </Container>
     </>
   )

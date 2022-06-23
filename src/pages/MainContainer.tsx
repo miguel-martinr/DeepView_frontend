@@ -13,9 +13,6 @@ export const MainContainer = () => {
       <Container fluid>
         <header className="App-header">
           <Row>
-            <Col className='text-start' sm={1}>
-              <Button onClick={() => navigate(-1)}>{'<'}</Button>
-            </Col>
             <Col className='text-center'>
               <h1>DeepView</h1>
             </Col>
