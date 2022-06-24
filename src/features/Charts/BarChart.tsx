@@ -47,6 +47,12 @@ export const BarChart = (props: BarChartProps) => {
         {...props}
         options={{
           responsive: true,
+          scales: {
+            x: {
+              type: 'time',
+              time: { unit: 'second' }
+            }
+          },
           plugins: {
             zoom: {
               pan: {

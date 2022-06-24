@@ -1,5 +1,5 @@
 import { deepViewApi } from "../api/api";
-import { Video, VideoStatus } from "../pages/VideosPage";
+import { VideoStatus } from "../types/Video";
 
 export interface StatusWatcherConfig {
   autoClear: boolean,

@@ -2,7 +2,7 @@ import { ChartData } from 'chart.js';
 import React, { useEffect, useState } from 'react'
 import { Button, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
-import { BASE_URL, deepViewApi } from '../api/api';
+import { deepViewApi } from '../api/api';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { BarChart } from '../features/Charts/BarChart';
 import { StatusButton } from '../features/StatusButton/StatusButton';
@@ -14,20 +14,6 @@ import { getFormattedTime } from '../utils/time';
 import { VideoStatus } from './VideosPage';
 
 
-interface Particle {
-  x: number,
-  y: number,
-  radius: number,
-  area: number,
-}
-
-interface Frame {
-  particles: Particle[],
-}
-
-interface VideoData {
-  frames: Frame[],
-}
 
 
 export const VideoPage = () => {
@@ -90,6 +76,7 @@ export const VideoPage = () => {
               label: 'Media de partículas por frame',
               backgroundColor: '#f87979',
               data,
+
             }
           ]
         });
@@ -152,7 +139,6 @@ export const VideoPage = () => {
               <Col>
                 <BarChart
                   height={100}
-
                   data={visibleData}
                 />
               </Col>

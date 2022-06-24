@@ -1,21 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { deepViewApi } from '../api/api';
 import { VideoRow } from '../features/VideoRow'
-import './styles.css'
-import { Col, Collapse, Container, Fade, Row, Spinner } from 'react-bootstrap';
-import { StatusWatcher } from '../utils/fetch';
-import { setCurrentVideo, setVideo, setVideos } from '../state/workspace-slice';
+import { Col, Container, Fade, Row, Spinner } from 'react-bootstrap';
+import { setVideos } from '../state/workspace-slice';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { Video } from '../types/Video';
+import './styles.css'
 
-export type VideoStatus = 'processing' | 'processed' | 'stopped' | 'unprocessed';
-export interface Video {
-  name: string,
-  size_in_MB: number,
-  duration_in_seconds: number,
-  fps: number,
-  // resolution: string,
-  status: VideoStatus,
-}
+
 
 export const VideosPage = () => {
 
@@ -26,7 +18,6 @@ export const VideosPage = () => {
 
   // Internal state
   const [isLoading, setIsLoading] = useState(false);
-  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     fetchVideos();
@@ -36,15 +27,13 @@ export const VideosPage = () => {
   // Handlers
   const fetchVideos = async () => {
     setIsLoading(true);
-    deepViewApi.fetchAvailableVideos().then((fetchedVideos: Video[]) => {      
+    deepViewApi.fetchAvailableVideos().then((fetchedVideos: Video[]) => {
       dispatch(setVideos(fetchedVideos));
       setIsLoading(false);
     }).catch(err => {
       console.log(err);
     });
   }
-
-
 
 
   return (
