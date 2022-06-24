@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Video } from "../pages/VideosPage";
+import { Video } from "../types/Video";
 
 
 export interface VideoCollection {
