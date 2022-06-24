@@ -37,7 +37,9 @@ export const VideoRow = ({ name }: VideoRowProps) => {
   const handleProcess = () => {
     deepViewApi.processVideo(video.name).then((res: any) => {
       setStatus('processing');
+      watcher.clear();
       watcher.setCurrentStatus('processing');
+      wacthStatus();
       console.log(res);
     });
   }
@@ -91,7 +93,7 @@ export const VideoRow = ({ name }: VideoRowProps) => {
               <Button onClick={() => navigateToVideo()}>Abrir</Button>
               <Button
                 disabled={video.status === 'stopped'}
-                variant='success'
+                variant={video.status === 'processing' ? 'warning' : 'success'}
                 onClick={video.status === 'processing' ? handleStopProcessing : handleProcess}
               >
                 {video.status === 'processing' ? 'Detener' : 'Procesar'}
