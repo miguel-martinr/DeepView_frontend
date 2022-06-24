@@ -11,7 +11,7 @@ import { VideoPlayer } from '../features/VideoPlayer/VideoPlayer';
 import { setVideo } from '../state/workspace-slice';
 import { StatusWatcher } from '../utils/fetch';
 import { getFormattedTime } from '../utils/time';
-import { VideoStatus } from './VideosPage';
+import { VideoStatus } from '../types/Video';
 
 
 
