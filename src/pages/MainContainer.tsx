@@ -1,19 +1,25 @@
 import React from 'react'
-import { Outlet } from 'react-router-dom'
+import { Button, Col, Container, Row } from 'react-bootstrap'
+import { Outlet, useNavigate } from 'react-router-dom'
 
 import '../App.css'
 
 export const MainContainer = () => {
 
+  const navigate = useNavigate();
 
   return (
     <div>
-      <header className="App-header">
-        <h1>DeepView</h1>
-      </header>
-      <div className="container fluid mt-2">
-        <Outlet />
-      </div>
+      <Container fluid>
+        <header className="App-header">
+          <Row>
+            <Col className='text-center'>
+              <h1>DeepView</h1>
+            </Col>
+          </Row>
+        </header>
+      </Container>
+      <Outlet />
     </div>
   )
 }

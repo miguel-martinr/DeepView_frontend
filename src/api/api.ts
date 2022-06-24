@@ -20,13 +20,13 @@ function authenticate(config: AxiosRequestConfig<any>) {
 
 }
 
-
+export const BASE_URL = 'http://localhost:8000/'
 export class DeepViewApi {
   http: AxiosInstance;
 
   constructor() {
     this.http = axios.create({
-      baseURL: 'http://localhost:8000/deepcom/',
+      baseURL: BASE_URL + 'deepcom/',
       withCredentials: true,
     });
 
@@ -39,7 +39,7 @@ export class DeepViewApi {
         action: 'list-available',
       }
     });
-    
+
     if (response.data.success) {
       return response.data.message;
     } else {
@@ -81,13 +81,31 @@ export class DeepViewApi {
       }
     });
 
-    
-    const {success, message} = response.data;
+
+    const { success, message } = response.data;
     if (success) {
       return message;
     } else {
       throw new Error(message);
     }
+  }
+
+  async fetchParticlesAverageQuantity(video_name: string, unit = 'seconds') {
+    const response = await this.http.get('/video', {
+      params: {
+        action: 'get-data',
+        video_name,
+        type: 'ParticlesAverage',
+        unit,
+      }
+    });
+
+    if (response.data.success) {
+      return response.data.data;
+    } else {
+      throw new Error(response.data.message);
+    }
+
   }
 
 }

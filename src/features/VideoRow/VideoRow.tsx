@@ -1,0 +1,108 @@
+import React, { useEffect, useRef, useState } from 'react'
+import { Button, Col, Row } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
+import { deepViewApi } from '../../api/api'
+import { useAppDispatch, useAppSelector } from '../../app/hooks'
+
+import { Video, VideoStatus } from '../../pages/VideosPage'
+import { setCurrentVideo, setVideo } from '../../state/workspace-slice'
+import { StatusWatcher } from '../../utils/fetch'
+import { StatusButton } from '../StatusButton/StatusButton'
+import './Videos.css'
+
+interface VideoRowProps {
+  name: string
+}
+
+export const VideoRow = ({ name }: VideoRowProps) => {
+  // Global state
+  const video = useAppSelector(({ workspace }) => workspace.videos[name]);
+  const dispatch = useAppDispatch();
+
+  if (!video) return null;
+
+  // Internal state
+  const navigate = useNavigate();
+  const intervalRef = useRef<any>(null);
+  const watcher = new StatusWatcher({ autoClear: false, currentStatus: video.status, });
+
+  useEffect(() => {
+    wacthStatus();
+
+    return () => watcher.clear();
+  }, [])
+
+
+  // Handlers
+  const handleProcess = () => {
+    deepViewApi.processVideo(video.name).then((res: any) => {
+      setStatus('processing');
+      watcher.clear();
+      watcher.setCurrentStatus('processing');
+      wacthStatus();
+      console.log(res);
+    });
+  }
+
+  const handleStopProcessing = () => {
+    deepViewApi.stopProcessing(video.name).then((res: any) => {
+      console.log('stopping')
+      setStatus("stopped");
+    });
+  }
+
+  const wacthStatus = () => {
+
+    watcher.addEventListener('statusChanged', (e) => {
+      const ev = e as CustomEvent;
+      setStatus(ev.detail);
+    });
+
+    watcher.startWatching(video.name);
+  }
+
+
+
+  const navigateToVideo = () => {
+    dispatch(setCurrentVideo(video));
+    navigate(`/video/${video.name}`);
+  }
+
+  const setStatus = (status: VideoStatus) => {
+    const updatedVideo = JSON.parse(JSON.stringify(video));
+    updatedVideo.status = status;
+    dispatch(setVideo(updatedVideo));
+  }
+
+  return (
+    <Row className="video-row p-1 mt-1">
+
+      {/* d-flex flex-column justify-content-center  */}
+      <Col>
+        <Row>
+          <Col>
+            <h5>{video.name}</h5>
+          </Col>
+          <Col className='text-end'>
+            <StatusButton status={video.status} />
+          </Col>
+        </Row>
+        <Row>
+          <Col sm={12}>
+            <div className="btn-group" role="group" aria-label="Basic example">
+              <Button onClick={() => navigateToVideo()}>Abrir</Button>
+              <Button
+                disabled={video.status === 'stopped'}
+                variant={video.status === 'processing' ? 'warning' : 'success'}
+                onClick={video.status === 'processing' ? handleStopProcessing : handleProcess}
+              >
+                {video.status === 'processing' ? 'Detener' : 'Procesar'}
+
+              </Button>
+            </div>
+          </Col>
+        </Row>
+      </Col>
+    </Row>
+  )
+}

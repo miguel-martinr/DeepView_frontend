@@ -1,9 +1,21 @@
 import React from 'react'
+import { Button, Col, Container, Row } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 export const HomePage = () => {
+
+  const navigate = useNavigate();
+
+
   return (
-    <div>
-      <h1>Home page</h1>
-    </div>
+    <Container>
+      <Row className='mt-2'>
+        <Col sm={1}>
+          <Button onClick={() => navigate('/videos')}>
+            Vídeos
+          </Button>
+        </Col>
+      </Row>
+    </Container>
   )
 }
