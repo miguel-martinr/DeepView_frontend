@@ -1,6 +1,6 @@
 import { ChartData } from 'chart.js';
 import React, { useEffect, useState } from 'react'
-import { Button, Col, Container, Row, Spinner } from 'react-bootstrap';
+import { Button, ButtonGroup, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import { deepViewApi } from '../api/api';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
@@ -8,10 +8,10 @@ import { BarChart } from '../features/Charts/BarChart';
 import { StatusButton } from '../features/StatusButton/StatusButton';
 import { VideoInfoCard } from '../features/VideoInfo/VideoInfoCard';
 import { VideoPlayer } from '../features/VideoPlayer/VideoPlayer';
-import { setVideo } from '../state/workspace-slice';
+import { setVideo, setVideoData } from '../state/workspace-slice';
 import { StatusWatcher } from '../utils/fetch';
-import { getFormattedTime } from '../utils/time';
-import { VideoStatus } from '../types/Video';
+import { Video, VideoData, VideoDataUnit, VideoStatus } from '../types/Video';
+import { groupArr } from '../utils/math';
 
 
 
@@ -19,20 +19,21 @@ import { VideoStatus } from '../types/Video';
 export const VideoPage = () => {
 
   const navigate = useNavigate();
-  
+
   const { name } = useParams();
   if (!name) {
     navigate(-1);
     alert('No se ha encontrado el vídeo :(');
     return null;
   }
-  
+
   const dispatch = useAppDispatch();
-  
+
 
   // Internal state
   const video = useAppSelector(({ workspace }) => workspace.videos[name]);
   const [fetchingData, setFetchingData] = useState(false);
+  const [unit, setUnit] = useState<VideoDataUnit>('minutes');
 
   if (!video) {
     navigate(-1);
@@ -42,20 +43,10 @@ export const VideoPage = () => {
 
   const statusWatcher = new StatusWatcher({ autoClear: false, currentStatus: video.status })
 
-  const [visibleData, setVisibleData] = useState<ChartData<"bar", (number | null)[], unknown>>({
-    labels: [],
-    datasets: [
-      {
-        label: '',
-        backgroundColor: '#f87979',
-        data: []
-      }
-    ]
-  });
 
 
   useEffect(() => {
-    fetchData();
+    fetchData(unit);
     watchStatus();
 
     return () => {
@@ -64,38 +55,34 @@ export const VideoPage = () => {
   }, [])
 
   // Handlers
-  const fetchData = async () => {
+  const fetchData = async (unitToFetch: VideoDataUnit) => {
     if (!video) return;
     setFetchingData(true);
-    deepViewApi.fetchParticlesAverageQuantity(video.name, 'seconds')
-      .then((data: number[]) => {        
-        setVisibleData({
-          labels: data.map((_, i) => getFormattedTime(i)),
-          datasets: [
-            {
-              label: 'Media de partículas por frame',
-              backgroundColor: '#f87979',
-              data,
-
-            }
-          ]
-        });
+    deepViewApi.fetchParticlesAverageQuantity(video.name, unitToFetch)
+      .then((data: number[]) => {
+        setData(data, unitToFetch)
       })
       .catch(err => {
-        console.warn(err.message)
-        setVisibleData({
-          labels: [],
-          datasets: [
-            {
-              label: '',
-              backgroundColor: '#f87979',
-              data: []
-            }
-          ]
-        })
+
       })
       .finally(() => setFetchingData(false));
   }
+
+  const setData = (data: number[], targetUnit: VideoDataUnit) => {
+    const units: VideoDataUnit[] = ['seconds', 'minutes', 'hours'];
+    let calculatedData: any = {[targetUnit]: data};
+
+    for (let i = units.indexOf(unit) + 1; i < units.length; i++) {
+      const newUnit = groupArr<number>(data, Math.pow(60, i))
+        .map(group => group.reduce((sum, cur) => sum + cur, 0));
+      calculatedData[units[i]] = newUnit;
+    }
+    dispatch(setVideoData({
+      videoName: video.name,
+      data: calculatedData,
+    }))
+  }
+
 
   const watchStatus = () => {
     statusWatcher.addEventListener('statusChanged', (e) => {
@@ -112,6 +99,13 @@ export const VideoPage = () => {
     dispatch(setVideo(updatedVideo));
   }
 
+  const updateUnit = (newUnit: VideoDataUnit) => {
+    const fetchedData = video.data;
+    if (fetchedData[newUnit].length === 0)
+      fetchData(newUnit);
+    setUnit(newUnit);
+  }
+
   return (
     !video ? null :
       <Container className='p-5' fluid>
@@ -126,9 +120,9 @@ export const VideoPage = () => {
           </Col>
           <Col sm={8}>
             <Row>
-              <Col className='text-end' sm={{span: 3, offset: 6}}>
-              <Button onClick={() => fetchData()}>
-                {fetchingData ? <Spinner animation='border' size='sm' /> : 'Actualizar'}
+              <Col className='text-end' sm={{ span: 3, offset: 6 }}>
+                <Button onClick={() => fetchData(unit)}>
+                  {fetchingData ? <Spinner animation='border' size='sm' /> : 'Actualizar'}
                 </Button>
               </Col>
               <Col className='text-end' sm={3}>
@@ -139,8 +133,33 @@ export const VideoPage = () => {
               <Col>
                 <BarChart
                   height={100}
-                  data={visibleData}
+                  data={{
+                    labels: video.data[unit].map((_, i) => i),
+                    datasets: [
+                      {
+                        label: 'Media de partículas por frame',
+                        backgroundColor: '#f87979',
+                        data: video.data[unit],
+                      }
+                    ]
+                  }}
+                  unit={unit}
                 />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+              <ButtonGroup>
+                <Button onClick={() => updateUnit('seconds')}>
+                  Segundos
+                </Button>
+                <Button onClick={() => updateUnit('minutes')}>
+                  Minutos
+                </Button>
+                <Button onClick={() => updateUnit('hours')}>
+                  Horas
+                </Button>            
+              </ButtonGroup>
               </Col>
             </Row>
           </Col>

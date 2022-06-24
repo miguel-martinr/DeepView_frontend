@@ -28,7 +28,8 @@ export const VideosPage = () => {
   const fetchVideos = async () => {
     setIsLoading(true);
     deepViewApi.fetchAvailableVideos().then((fetchedVideos: Video[]) => {
-      dispatch(setVideos(fetchedVideos));
+      
+      dispatch(setVideos(fetchedVideos.map(v => ({...v, data: {seconds: [], minutes: [], hours: []}}))));
       setIsLoading(false);
     }).catch(err => {
       console.log(err);

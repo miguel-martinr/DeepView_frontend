@@ -19,12 +19,13 @@ import annotationPlugin from 'chartjs-plugin-annotation';
 // Utils
 import './styles.css'
 import { average } from '../../utils';
+import { getFormattedTime } from '../../utils/time';
 
 
 interface BarChartProps extends
   Omit<ChartProps<"bar", (number | null)[], unknown>, "type"> {
 
-
+  unit: 'seconds' | 'minutes' | 'hours';
 }
 
 
@@ -40,11 +41,35 @@ ChartJS.register(
 );
 
 export const BarChart = (props: BarChartProps) => {
-  
+  const { data, unit } = props;
+  const { labels, ...rest } = data;
+
+  // Handlers
+  const formatTimeUnit = (time: number) => {
+    switch (unit) {
+      case 'seconds':
+        return getFormattedTime(time)
+        
+      case 'minutes':
+        return getFormattedTime(time * 60)
+
+      default:
+        return getFormattedTime(time * 60 * 60)
+    }
+  }
+
   return (
     <>
       <Bar
         {...props}
+        data={
+          {
+            labels: labels!.map((l) => formatTimeUnit(parseInt(l as string))),
+            ...rest,
+          }
+        }
+
+
         options={{
           responsive: true,
           plugins: {
@@ -71,7 +96,7 @@ export const BarChart = (props: BarChartProps) => {
             },
             annotation: {
               annotations: [
-                {                  
+                {
                   type: 'line',
                   display: true,
                   borderColor: 'black',

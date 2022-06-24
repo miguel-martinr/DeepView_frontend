@@ -9,11 +9,19 @@ export interface Frame {
   particles: Particle[],
 }
 
-export interface VideoData {
-  frames: Frame[],
-}
+// export interface VideoData {
+//   frames: Frame[],
+// }
 
 export type VideoStatus = 'processing' | 'processed' | 'stopped' | 'unprocessed';
+export type VideoDataUnit = 'seconds' | 'minutes' | 'hours';
+
+// export type VideoData = {unit: VideoDataUnit, values: number[]};
+export type VideoData = {
+  seconds: number[],
+  minutes: number[],
+  hours: number[],
+}
 export interface Video {
   name: string,
   size_in_MB: number,
@@ -21,5 +29,5 @@ export interface Video {
   fps: number,
   // resolution: string,
   status: VideoStatus,
-  data: VideoData
+  data: VideoData,
 }

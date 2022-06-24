@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Video } from "../types/Video";
+import { Video, VideoData } from "../types/Video";
 
 
 export interface VideoCollection {
@@ -31,6 +31,16 @@ const workspaceSlice = createSlice({
     setVideos(state, action: PayloadAction<Video[]>) {
       const videos = action.payload;
       videos.forEach(v => state.videos = {...state.videos, [v.name]: v});      
+    },
+
+    setVideoData(state, action: PayloadAction<{videoName: string, data: Partial<VideoData>}>) {
+
+      const { videoName, data } = action.payload;
+      if (!state.videos[videoName]) return;
+
+      
+      const currentData = state.videos[videoName].data;
+      state.videos[videoName].data = {...currentData, ...data};
     }
   }
 });
@@ -38,7 +48,9 @@ const workspaceSlice = createSlice({
 export const {
   setCurrentVideo,
   setVideo,
+  setVideoData,
   setVideos,
+
 } = workspaceSlice.actions;
 
 export default workspaceSlice.reducer;
