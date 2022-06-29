@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card, Form, InputGroup } from 'react-bootstrap'
-import { Video } from '../../pages/VideosPage'
+import { Video } from '../../types/Video'
 import { getFormattedTime } from '../../utils/time'
 import './styles.css'
 
