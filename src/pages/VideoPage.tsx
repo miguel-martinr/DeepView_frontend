@@ -12,6 +12,7 @@ import { setVideo, setVideoData } from '../state/workspace-slice';
 import { StatusWatcher } from '../utils/fetch';
 import { Video, VideoData, VideoDataUnit, VideoStatus } from '../types/Video';
 import { groupArr } from '../utils/math';
+import { Evaluator } from '../features/Evaluator/Evaluator';
 
 
 type VideoPageMode = 'evaluation' | 'analysis';
@@ -41,6 +42,9 @@ export const VideoPage = () => {
     alert('No se ha encontrado el vídeo :(');
     return null;
   }
+
+  const videoId = "videoInput";
+  const canvasId = "frameCanvas";
 
   const statusWatcher = new StatusWatcher({ autoClear: false, currentStatus: video.status })
   const label = unit === 'seconds' ? 'Moda de partículas cada 30 frames' :
@@ -117,18 +121,32 @@ export const VideoPage = () => {
 
     const { videoWidth: width, videoHeight: height } = videoElement;
 
+    canvasElement.width = width;
+    canvasElement.height = height;
+
     context.lineWidth = 100;
     context.strokeStyle = "red";
 
     const interval = setInterval(function () {
       context.drawImage(videoElement, 0, 0, width, height);
-      
+
       // context.strokeRect(0, 0, 200, 100);
     }, 33);
 
     setDrawInterval(interval);
   }
 
+  const selectFrame = () => {
+
+    const video = document.createElement(videoId) as HTMLVideoElement;
+    const canvas = document.createElement(canvasId) as HTMLCanvasElement;
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    ctx.drawImage(video, 0, 0);
+    // return canvas.toDataURL('image/png');
+  }
 
   const toggleMode = () => {
     if (mode === 'analysis')
@@ -161,7 +179,7 @@ export const VideoPage = () => {
               <Col>
                 <VideoPlayer
                   src={deepViewApi.http.getUri() + 'videos/' + video.name}
-                  videoId="videoInput"
+                  videoId={videoId}
                 />
               </Col>
             </Row>
@@ -185,39 +203,46 @@ export const VideoPage = () => {
                 <StatusButton status={video.status} />
               </Col>
             </Row>
-            <Row>
-              <Col>
-                <BarChart
-                  height={100}
-                  data={{
-                    labels: video.data[unit].map((_, i) => i),
-                    datasets: [
-                      {
-                        label,
-                        backgroundColor: '#f87979',
-                        data: video.data[unit],
-                      }
-                    ]
-                  }}
-                  unit={unit}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <ButtonGroup>
-                  <Button variant={unit === 'seconds' ? 'primary' : ''} className='active' onClick={() => updateUnit('seconds')}>
-                    Segundos
-                  </Button>
-                  <Button variant={unit === 'minutes' ? 'primary' : ''} onClick={() => updateUnit('minutes')}>
-                    Minutos
-                  </Button>
-                  <Button variant={unit === 'hours' ? 'primary' : ''} onClick={() => updateUnit('hours')}>
-                    Horas
-                  </Button>
-                </ButtonGroup>
-              </Col>
-            </Row>
+            {
+              mode === 'analysis' ?
+                <>
+                  <Row>
+                    <Col>
+                      <BarChart
+                        height={100}
+                        data={{
+                          labels: video.data[unit].map((_, i) => i),
+                          datasets: [
+                            {
+                              label,
+                              backgroundColor: '#f87979',
+                              data: video.data[unit],
+                            }
+                          ]
+                        }}
+                        unit={unit}
+                      />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      <ButtonGroup>
+                        <Button variant={unit === 'seconds' ? 'primary' : ''} className='active' onClick={() => updateUnit('seconds')}>
+                          Segundos
+                        </Button>
+                        <Button variant={unit === 'minutes' ? 'primary' : ''} onClick={() => updateUnit('minutes')}>
+                          Minutos
+                        </Button>
+                        <Button variant={unit === 'hours' ? 'primary' : ''} onClick={() => updateUnit('hours')}>
+                          Horas
+                        </Button>
+                      </ButtonGroup>
+                    </Col>
+                  </Row>
+                </>
+                :
+                <Evaluator videoId={videoId} videoName={video.name}/>
+            }
           </Col>
         </Row>
       </Container>

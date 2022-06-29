@@ -20,7 +20,7 @@ function authenticate(config: AxiosRequestConfig<any>) {
 
 }
 
-export const BASE_URL = 'http://localhost:8000/'
+export const BASE_URL = 'http://192.168.1.18:8000/'
 export class DeepViewApi {
   http: AxiosInstance;
 
@@ -108,6 +108,22 @@ export class DeepViewApi {
 
   }
 
+  async processFrame(videoName: string, frameIndex: number, params: any) {
+    const response = await this.http.post('/video', {
+      action: 'process_frame',
+      payload: {
+        video_name: videoName,
+        frame_index: frameIndex,
+        params,
+      }
+    });
+
+    if (response.data.success) {
+      return response.data.result;
+    } else {
+      throw new Error(response.data.message);
+    }
+  }
 }
 
 
