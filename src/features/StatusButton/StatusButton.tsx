@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button, Spinner } from 'react-bootstrap'
-import { VideoStatus } from '../../pages/VideosPage'
+import { VideoStatus } from '../../types/Video'
+
 import './styles.css'
 export interface StatusButtonProps {
   status: VideoStatus
