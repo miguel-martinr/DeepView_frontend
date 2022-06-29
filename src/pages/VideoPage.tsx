@@ -113,41 +113,6 @@ export const VideoPage = () => {
     setUnit(newUnit);
   }
 
-  const draw = () => {
-    const canvasElement = document.getElementById('videoCanvas') as HTMLCanvasElement;
-
-    const context = canvasElement.getContext("2d") as CanvasRenderingContext2D;
-    const videoElement = document.getElementById("videoInput") as HTMLVideoElement;
-
-    const { videoWidth: width, videoHeight: height } = videoElement;
-
-    canvasElement.width = width;
-    canvasElement.height = height;
-
-    context.lineWidth = 100;
-    context.strokeStyle = "red";
-
-    const interval = setInterval(function () {
-      context.drawImage(videoElement, 0, 0, width, height);
-
-      // context.strokeRect(0, 0, 200, 100);
-    }, 33);
-
-    setDrawInterval(interval);
-  }
-
-  const selectFrame = () => {
-
-    const video = document.createElement(videoId) as HTMLVideoElement;
-    const canvas = document.createElement(canvasId) as HTMLCanvasElement;
-
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-    ctx.drawImage(video, 0, 0);
-    // return canvas.toDataURL('image/png');
-  }
-
   const toggleMode = () => {
     if (mode === 'analysis')
       return setMode('evaluation')
