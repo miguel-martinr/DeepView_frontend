@@ -1,15 +1,19 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './styles.css'
 
 export interface VideoPlayerProps {
   src: string,
+  videoId: string,
 }
 
 export const VideoPlayer = (props: VideoPlayerProps) => {
-  const { src } = props;
+  const { src, videoId } = props;
+
   return (
-    <video controls>
-      <source src={src} />
-    </video>
+    <>
+      <video controls id={videoId}>
+        <source src={src} />
+      </video>
+    </>
   )
 }

@@ -14,12 +14,12 @@ import { Video, VideoData, VideoDataUnit, VideoStatus } from '../types/Video';
 import { groupArr } from '../utils/math';
 
 
-
+type VideoPageMode = 'evaluation' | 'analysis';
 
 export const VideoPage = () => {
 
   const navigate = useNavigate();
-
+  const [drawInterval, setDrawInterval] = useState(-1);
   const { name } = useParams();
   if (!name) {
     navigate(-1);
@@ -34,6 +34,7 @@ export const VideoPage = () => {
   const video = useAppSelector(({ workspace }) => workspace.videos[name]);
   const [fetchingData, setFetchingData] = useState(false);
   const [unit, setUnit] = useState<VideoDataUnit>('hours');
+  const [mode, setMode] = useState<VideoPageMode>('analysis');
 
   if (!video) {
     navigate(-1);
@@ -108,13 +109,66 @@ export const VideoPage = () => {
     setUnit(newUnit);
   }
 
+  const draw = () => {
+    const canvasElement = document.getElementById('videoCanvas') as HTMLCanvasElement;
+
+    const context = canvasElement.getContext("2d") as CanvasRenderingContext2D;
+    const videoElement = document.getElementById("videoInput") as HTMLVideoElement;
+
+    const { videoWidth: width, videoHeight: height } = videoElement;
+
+    context.lineWidth = 100;
+    context.strokeStyle = "red";
+
+    const interval = setInterval(function () {
+      context.drawImage(videoElement, 0, 0, width, height);
+      
+      // context.strokeRect(0, 0, 200, 100);
+    }, 33);
+
+    setDrawInterval(interval);
+  }
+
+
+  const toggleMode = () => {
+    if (mode === 'analysis')
+      return setMode('evaluation')
+    return setMode('analysis')
+  }
+
   return (
     !video ? null :
       <Container className='p-5' fluid>
         <Row>
           <Col sm={4}>
             <Row>
-              <Col><VideoPlayer src={deepViewApi.http.getUri() + 'videos/' + video.name} /></Col>
+              <Col className='mb-2'>
+                <Button
+                  variant={mode === 'evaluation' ? 'warning' : ''}
+                  onClick={() => toggleMode()}
+                >
+                  Evaluación
+                </Button>
+                <Button
+                  variant={mode === 'analysis' ? 'warning' : ''}
+                  onClick={() => toggleMode()}
+                >
+                  Análisis
+                </Button>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <VideoPlayer
+                  src={deepViewApi.http.getUri() + 'videos/' + video.name}
+                  videoId="videoInput"
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <canvas id='videoCanvas'></canvas>
+              </Col>
             </Row>
             <Row>
               <Col><VideoInfoCard video={video}></VideoInfoCard></Col>
