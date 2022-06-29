@@ -78,7 +78,7 @@ export const VideoPage = () => {
     const units: VideoDataUnit[] = ['seconds', 'minutes', 'hours'];
     let calculatedData: any = { [targetUnit]: data };
 
-    for (let i = units.indexOf(unit) + 1; i < units.length; i++) {
+    for (let i = units.indexOf(targetUnit) + 1; i < units.length; i++) {
       const newUnit = groupArr<number>(data, Math.pow(60, i))
         .map(group => group.reduce((sum, cur) => sum + cur, 0));
       console.log(`NEWUNIT: ${newUnit}`)

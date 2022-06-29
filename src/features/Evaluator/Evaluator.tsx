@@ -41,15 +41,6 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
     ctx.drawImage(video, 0, 0);
   }
 
-  // const drawObjects = (objects: ParticleObject[]) => {
-  //   const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
-  //   const video = document.getElementById(videoId) as HTMLVideoElement;
-    
-  //   const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-
-  //   ctx.drawImage(video, 0, 0);
-  // }
-
 
   const processFrame = () => {
     const video = document.getElementById(videoId) as HTMLVideoElement;
@@ -72,9 +63,8 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
     const { circle } = object;
     const [center, radius] = circle;
 
-    ctx.arc(center[0], center[1], radius * 1.5, 0, 2 * Math.PI, false)
-    // ctx.fillStyle = 'green'
-    // ctx.fill()
+    ctx.arc(center[0], center[1], radius * 2, 0, 2 * Math.PI, false)
+
 
     ctx.lineWidth = 5
     ctx.strokeStyle = '#00ff00';
@@ -107,9 +97,6 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
         <Col>
           Parámetros
         </Col>
-        {/* <Col>
-        <Row><Col><h2>Resultados</h2></Col></Row>
-        </Col> */}
       </Row>
     </>
   )
