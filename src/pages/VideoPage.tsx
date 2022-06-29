@@ -33,7 +33,7 @@ export const VideoPage = () => {
   // Internal state
   const video = useAppSelector(({ workspace }) => workspace.videos[name]);
   const [fetchingData, setFetchingData] = useState(false);
-  const [unit, setUnit] = useState<VideoDataUnit>('minutes');
+  const [unit, setUnit] = useState<VideoDataUnit>('hours');
 
   if (!video) {
     navigate(-1);
@@ -42,7 +42,8 @@ export const VideoPage = () => {
   }
 
   const statusWatcher = new StatusWatcher({ autoClear: false, currentStatus: video.status })
-
+  const label = unit === 'seconds' ? 'Moda de partículas cada 30 frames' :
+    `Partículas por ${unit === 'minutes' ? 'minuto' : 'hora'}`;
 
 
   useEffect(() => {
@@ -70,11 +71,12 @@ export const VideoPage = () => {
 
   const setData = (data: number[], targetUnit: VideoDataUnit) => {
     const units: VideoDataUnit[] = ['seconds', 'minutes', 'hours'];
-    let calculatedData: any = {[targetUnit]: data};
+    let calculatedData: any = { [targetUnit]: data };
 
     for (let i = units.indexOf(unit) + 1; i < units.length; i++) {
       const newUnit = groupArr<number>(data, Math.pow(60, i))
         .map(group => group.reduce((sum, cur) => sum + cur, 0));
+      console.log(`NEWUNIT: ${newUnit}`)
       calculatedData[units[i]] = newUnit;
     }
     dispatch(setVideoData({
@@ -137,7 +139,7 @@ export const VideoPage = () => {
                     labels: video.data[unit].map((_, i) => i),
                     datasets: [
                       {
-                        label: 'Media de partículas por frame',
+                        label,
                         backgroundColor: '#f87979',
                         data: video.data[unit],
                       }
@@ -149,17 +151,17 @@ export const VideoPage = () => {
             </Row>
             <Row>
               <Col>
-              <ButtonGroup>
-                <Button onClick={() => updateUnit('seconds')}>
-                  Segundos
-                </Button>
-                <Button onClick={() => updateUnit('minutes')}>
-                  Minutos
-                </Button>
-                <Button onClick={() => updateUnit('hours')}>
-                  Horas
-                </Button>            
-              </ButtonGroup>
+                <ButtonGroup>
+                  <Button variant={unit === 'seconds' ? 'primary' : ''} className='active' onClick={() => updateUnit('seconds')}>
+                    Segundos
+                  </Button>
+                  <Button variant={unit === 'minutes' ? 'primary' : ''} onClick={() => updateUnit('minutes')}>
+                    Minutos
+                  </Button>
+                  <Button variant={unit === 'hours' ? 'primary' : ''} onClick={() => updateUnit('hours')}>
+                    Horas
+                  </Button>
+                </ButtonGroup>
               </Col>
             </Row>
           </Col>
