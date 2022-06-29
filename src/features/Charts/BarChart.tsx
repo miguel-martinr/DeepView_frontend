@@ -105,7 +105,7 @@ export const BarChart = (props: BarChartProps) => {
                   borderWidth: 3,
                   label: {
                     enabled: true,
-                    content: (ctx) => 'Average: ' + average(ctx).toFixed(2),
+                    content: (ctx) => 'Media: ' + average(ctx).toFixed(2),
                     position: 'end'
                   },
                   scaleID: 'y',
