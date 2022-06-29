@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Button, Col, Row } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import { deepViewApi } from '../../api/api'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
-
-import { Video, VideoStatus } from '../../pages/VideosPage'
 import { setCurrentVideo, setVideo } from '../../state/workspace-slice'
+import { VideoStatus } from '../../types/Video'
 import { StatusWatcher } from '../../utils/fetch'
 import { StatusButton } from '../StatusButton/StatusButton'
 import './Videos.css'
