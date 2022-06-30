@@ -2,6 +2,10 @@ import { createNextState } from '@reduxjs/toolkit';
 import React, { useEffect, useState } from 'react'
 import { Button, Col, Row } from 'react-bootstrap'
 import { deepViewApi } from '../../api/api';
+import { useFormFields } from '../../utils/form-hook';
+import { mergeArrayOfObjects } from '../../utils/objects';
+import { FilterParameters, Parameter } from './FilterParameters';
+import { GeneralParameters } from './GeneralParameters';
 
 export interface EvaluatorProps {
   videoId: string,
@@ -13,12 +17,22 @@ export interface ParticleObject {
   area: number
 }
 
+const thresholdParameters: Parameter[] = [
+  { name: 'threshold', type: 'number', defaultValue: '20' }
+]
+
+
+
 export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
 
   // Internal state
   const [scaled, setScaled] = useState<boolean>(false);
   const canvasId = 'frameCanvas';
 
+  // Parameters setters 
+  const [thresholdFields, setThresholdFields] = useFormFields(mergeArrayOfObjects(thresholdParameters
+    .map(p => ({ [p.name]: p.defaultValue }))
+  ))
 
   // Effects
   useEffect(() => {
@@ -93,9 +107,18 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
           </Button>
         </Col>
       </Row>
-      <Row className='mt-5'>
+      <Row className='mt-3'>
         <Col>
-          Parámetros
+          <h4>Parámetros</h4>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <FilterParameters
+            filterName='Threshold'
+            parameters={thresholdParameters}
+            setter={setThresholdFields}
+          />
         </Col>
       </Row>
     </>
