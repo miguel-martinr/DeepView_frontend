@@ -10,7 +10,7 @@ export interface StatusWatcherConfig {
 const defaultConfig: StatusWatcherConfig = {
   autoClear: true,
   currentStatus: 'processing',
-  seconds: 5,
+  seconds: 15,
 }
 export class StatusWatcher extends EventTarget {
   private interval: NodeJS.Timer | null = null;
