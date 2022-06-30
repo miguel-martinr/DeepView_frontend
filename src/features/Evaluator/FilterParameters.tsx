@@ -2,6 +2,7 @@ import React from 'react'
 import { InputGroup, FormControl, Card, Col, Row, Form } from 'react-bootstrap'
 
 export interface Parameter {
+  id: string,
   name: string,
   type: 'text' | 'number',
   defaultValue: any
@@ -42,7 +43,7 @@ export const FilterParameters = (props: FilterParametersProps) => {
               <Col>
                 {
                   parameters.map(parameter => (
-                    <Form.Group controlId={parameter.name}>
+                    <Form.Group controlId={parameter.id}>
                       <InputGroup className="mb-3">
                         <InputGroup.Text>{parameter.name}</InputGroup.Text>
                         <FormControl

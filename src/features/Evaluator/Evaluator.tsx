@@ -18,10 +18,13 @@ export interface ParticleObject {
 }
 
 const thresholdParameters: Parameter[] = [
-  { name: 'threshold', type: 'number', defaultValue: '20' }
+  { id: 'threshold', name: 'Threshold', type: 'number', defaultValue: '20' }
 ]
 
-
+const tophatParameters: Parameter[] = [
+  { id: 'width', name: 'Ancho del kernel', type: 'number', defaultValue: '9' },
+  { id: 'height', name: 'Alto del kernel', type: 'number', defaultValue: '9' }
+]
 
 export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
 
@@ -31,7 +34,11 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
 
   // Parameters setters 
   const [thresholdFields, setThresholdFields] = useFormFields(mergeArrayOfObjects(thresholdParameters
-    .map(p => ({ [p.name]: p.defaultValue }))
+    .map(p => ({ [p.id]: p.defaultValue }))
+  ))
+
+  const [tophatFields, setTophatFields] = useFormFields(mergeArrayOfObjects(tophatParameters
+    .map(p => ({ [p.id]: p.defaultValue }))
   ))
 
   // Effects
@@ -118,6 +125,15 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
             filterName='Threshold'
             parameters={thresholdParameters}
             setter={setThresholdFields}
+          />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <FilterParameters
+            filterName='Top-hat'
+            parameters={tophatParameters}
+            setter={setTophatFields}
           />
         </Col>
       </Row>

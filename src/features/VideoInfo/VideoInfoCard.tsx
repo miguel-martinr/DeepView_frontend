@@ -20,7 +20,7 @@ export const VideoInfoCard = (props: VideoInfoCardProps) => {
 
 
   return (
-    <Card>
+    <Card className='info-card'>
       <Card.Body>
         <Card.Title>Información</Card.Title>
         <InputGroup>
