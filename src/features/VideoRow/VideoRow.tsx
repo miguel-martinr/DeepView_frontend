@@ -5,7 +5,7 @@ import { deepViewApi } from '../../api/api'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { setCurrentVideo, setVideo } from '../../state/workspace-slice'
 import { VideoStatus } from '../../types/Video'
-import { StatusWatcher } from '../../utils/fetch'
+import { StatusWatcher } from '../../utils/StatusWatcher'
 import { StatusButton } from '../StatusButton/StatusButton'
 import './Videos.css'
 

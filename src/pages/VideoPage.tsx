@@ -9,7 +9,7 @@ import { StatusButton } from '../features/StatusButton/StatusButton';
 import { VideoInfoCard } from '../features/VideoInfo/VideoInfoCard';
 import { VideoPlayer } from '../features/VideoPlayer/VideoPlayer';
 import { setVideo, setVideoData } from '../state/workspace-slice';
-import { StatusWatcher } from '../utils/fetch';
+import { StatusWatcher } from '../utils/StatusWatcher';
 import { Video, VideoData, VideoDataUnit, VideoStatus } from '../types/Video';
 import { groupArr } from '../utils/math';
 import { Evaluator } from '../features/Evaluator/Evaluator';
