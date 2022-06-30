@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { deepViewApi } from '../api/api';
 import { VideoRow } from '../features/VideoRow'
-import { Col, Container, Fade, Row, Spinner } from 'react-bootstrap';
+import { Button, Col, Container, Fade, Row, Spinner } from 'react-bootstrap';
 import { setVideos } from '../state/workspace-slice';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { Video } from '../types/Video';
@@ -28,8 +28,8 @@ export const VideosPage = () => {
   const fetchVideos = async () => {
     setIsLoading(true);
     deepViewApi.fetchAvailableVideos().then((fetchedVideos: Video[]) => {
-      
-      dispatch(setVideos(fetchedVideos.map(v => ({...v, data: {seconds: [], minutes: [], hours: []}}))));
+
+      dispatch(setVideos(fetchedVideos.map(v => ({ ...v, data: { seconds: [], minutes: [], hours: [] } }))));
       setIsLoading(false);
     }).catch(err => {
       console.log(err);
@@ -45,11 +45,23 @@ export const VideosPage = () => {
             <h1>Vídeos</h1>
           </Col>
         </Row>
-        <p>Aquí puedes ver los vídeos que están disponibles en el servidor</p>
-
+        <Row>
+          <Col>
+            <p>Aquí puedes ver los vídeos que están disponibles en el servidor</p>
+          </Col>
+        </Row>
+        <Row>
+          <Col className='text-end'>
+            <Button variant='primary' onClick={() => fetchVideos()}>
+              Refrescar
+            </Button>
+          </Col>
+        </Row>
         {
           isLoading ?
-            <div className='centered'> <Spinner variant='primary' animation='grow' /></div> : null
+            <div className='centered'> <Spinner variant='primary' animation='grow' /></div>
+            :
+            null
         }
         <Fade in={!isLoading}>
           <Row>
