@@ -18,7 +18,7 @@ export interface ParticleObject {
 }
 
 const thresholdParameters: Parameter[] = [
-  { id: 'threshold', name: 'Threshold', type: 'number', defaultValue: '20' }
+  { id: 'thresh', name: 'Umbral', type: 'number', defaultValue: '20' }
 ]
 
 const tophatParameters: Parameter[] = [
@@ -72,11 +72,28 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
     const fps = 30;
     let frameIndex = Math.round(video.currentTime * fps);
     frameIndex -= (frameIndex > 0 ? 1 : 0);
-    deepViewApi.processFrame(videoName, frameIndex, {})
+
+    const params = getProcessingParameters();
+    deepViewApi.processFrame(videoName, frameIndex, params)
       .then((objects: ParticleObject[]) => {
         for (const object of objects)
           drawObject(ctx, object)
       })
+  }
+
+  const getProcessingParameters = () => {
+    return {
+      "preprocess": {
+        "top_hat": {
+          filterSize: [parseInt(tophatFields.width), parseInt(tophatFields.height)],
+        }
+      },
+      "process": {
+        "threshold": {
+          thresh: parseInt(thresholdFields.thresh)
+        }
+      }
+    }
   }
 
   const drawObject = (ctx: CanvasRenderingContext2D, object: ParticleObject) => {
@@ -122,7 +139,7 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
       <Row>
         <Col>
           <FilterParameters
-            filterName='Threshold'
+            filterName='Binarizado'
             parameters={thresholdParameters}
             setter={setThresholdFields}
           />
