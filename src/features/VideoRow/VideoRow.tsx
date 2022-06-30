@@ -22,11 +22,12 @@ export const VideoRow = ({ name }: VideoRowProps) => {
 
   // Internal state
   const navigate = useNavigate();
-  const intervalRef = useRef<any>(null);
-  const watcher = new StatusWatcher({ autoClear: false, currentStatus: video.status, });
+  const watcherRef = useRef<StatusWatcher>(new StatusWatcher({ autoClear: true, currentStatus: video.status, }));
+  const watcher = watcherRef.current;
 
   useEffect(() => {
-    wacthStatus();
+    if (video.status === 'processing')
+      wacthStatus();
 
     return () => watcher.clear();
   }, [])
@@ -40,7 +41,7 @@ export const VideoRow = ({ name }: VideoRowProps) => {
       watcher.setCurrentStatus('processing');
       wacthStatus();
       console.log(res);
-    });
+    }).catch(err => alert(`Error al procesa vídeo :( -> ${err.message}`));
   }
 
   const handleStopProcessing = () => {

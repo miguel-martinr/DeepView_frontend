@@ -124,6 +124,10 @@ export class DeepViewApi {
       throw new Error(response.data.message);
     }
   }
+
+  getVideoStaticPath(videoName: string) {
+    return BASE_URL + 'static/videos/' + videoName;
+  }
 }
 
 

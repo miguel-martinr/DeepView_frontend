@@ -143,7 +143,7 @@ export const VideoPage = () => {
             <Row>
               <Col>
                 <VideoPlayer
-                  src={deepViewApi.http.getUri() + 'videos/' + video.name}
+                  src={deepViewApi.getVideoStaticPath(video.name)}
                   videoId={videoId}
                 />
               </Col>
