@@ -116,16 +116,19 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
           <canvas width={635} height={357} id={canvasId} />
         </Col>
       </Row>
+      {/* Under frame Buttons */}
       <Row>
         <Col>
           <Button
             onClick={() => selectFrame()}
+            className='me-1'
           >
             Seleccionar frame actual
           </Button>
           <Button
             variant='success'
             onClick={() => processFrame()}
+            className='me-1'
           >
             Procesar
           </Button>
@@ -152,6 +155,16 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
             parameters={tophatParameters}
             setter={setTophatFields}
           />
+        </Col>
+      </Row>
+      <Row className='mt-1'>
+        <Col>
+        <Button
+          variant='primary'
+        >
+          Guardar parámetros
+
+        </Button>
         </Col>
       </Row>
     </>
