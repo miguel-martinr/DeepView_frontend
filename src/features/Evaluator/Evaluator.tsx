@@ -85,35 +85,18 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
       })
   }
 
-  // TODO: it should return proper shape (see in types)
-  const getProcessingParameters = () => {
-    return {
-      "preprocess": {
-        "top_hat": {
-          filterSize: [parseInt(tophatFields.width), parseInt(tophatFields.height)],
-        }
-      },
-      "process": {
-        "threshold": {
-          thresh: parseInt(thresholdFields.thresh)
-        }
-      }
-    }
-  }
-
-  // Temporal. It returns parameters with proper type
-  const getProcessingParamers2 = (): ProcessingParameters => {
+  const getProcessingParameters = (): ProcessingParameters => {
     const parameters: ProcessingParameters = {
       preprocess: {
         top_hat: {
-          kernelWidth: tophatFields.kernelWidth,
-          kernelHeight: tophatFields.kernelHeight,
+          kernelWidth: parseInt(tophatFields.kernelWidth),
+          kernelHeight: parseInt(tophatFields.kernelHeight),
         }
       },
 
       process: {
         threshold: {
-          thresh: thresholdFields.thresh,
+          thresh: parseInt(thresholdFields.thresh),
         }
       }
     }
@@ -135,7 +118,7 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
   }
 
   const saveParameters = () => {
-    const parameters = getProcessingParamers2();
+    const parameters = getProcessingParameters();
     deepViewApi.saveParameters(videoName, parameters)
       .then((res) => {
         console.log(res.message);
@@ -160,6 +143,7 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
     });
   }
 
+
   return (
     <>
       <Row className='mt-2'>
@@ -181,7 +165,7 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
             onClick={() => processFrame()}
             className='me-1'
           >
-            Procesar
+            Procesar frame
           </Button>
         </Col>
       </Row>
