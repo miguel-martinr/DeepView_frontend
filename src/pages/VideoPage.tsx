@@ -8,7 +8,7 @@ import { BarChart } from '../features/Charts/BarChart';
 import { StatusButton } from '../features/StatusButton/StatusButton';
 import { VideoInfoCard } from '../features/VideoInfo/VideoInfoCard';
 import { VideoPlayer } from '../features/VideoPlayer/VideoPlayer';
-import { setVideo, setVideoData } from '../state/workspace-slice';
+import { setVideo, setVideoData, setVideoStatus } from '../state/workspace-slice';
 import { StatusWatcher } from '../utils/StatusWatcher';
 import { Video, VideoData, VideoDataUnit, VideoStatus } from '../types/Video';
 import { groupArr } from '../utils/math';
@@ -100,10 +100,8 @@ export const VideoPage = () => {
     statusWatcher.startWatching(video.name);
   }
 
-  const setStatus = (status: VideoStatus) => {
-    const updatedVideo = JSON.parse(JSON.stringify(video));
-    updatedVideo.status = status;
-    dispatch(setVideo(updatedVideo));
+  const setStatus = (status: VideoStatus) => {    
+    dispatch(setVideoStatus({videoName: video.name, status}));
   }
 
   const updateUnit = (newUnit: VideoDataUnit) => {

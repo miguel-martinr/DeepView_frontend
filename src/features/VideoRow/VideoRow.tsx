@@ -41,7 +41,7 @@ export const VideoRow = ({ name }: VideoRowProps) => {
       watcher.setCurrentStatus('processing');
       wacthStatus();
       console.log(res);
-    }).catch(err => alert(`Error al procesa vídeo :( -> ${err.message}`));
+    }).catch(err => alert(`Error al procesar vídeo :( -> ${err.message}`));
   }
 
   const handleStopProcessing = () => {

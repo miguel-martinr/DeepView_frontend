@@ -2,7 +2,10 @@ import { createNextState } from '@reduxjs/toolkit';
 import React, { useEffect, useState } from 'react'
 import { Button, Col, Row } from 'react-bootstrap'
 import { deepViewApi } from '../../api/api';
+import { useAppDispatch } from '../../app/hooks';
+import { setVideoStatus } from '../../state/workspace-slice';
 import { defaultParameters, ProcessingParameters } from '../../types/Parameters';
+import { VideoStatus } from '../../types/Video';
 import { useFormFields } from '../../utils/form-hook';
 import { mergeArrayOfObjects } from '../../utils/objects';
 import { FilterParameters, Parameter } from './FilterParameters';
@@ -30,6 +33,9 @@ const tophatParameters: Parameter[] = [
 ]
 
 export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
+
+  // Useful hooks
+  const dispatch = useAppDispatch();
 
   // Internal state
   const [scaled, setScaled] = useState<boolean>(false);
@@ -143,6 +149,16 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
     });
   }
 
+  const handleProcess = () => {
+    deepViewApi.processVideo(videoName).then((res: any) => {
+      updateVideoStatus('processing');
+      console.log(`Vídeo ${videoName} is being processed: ${res}`);
+    }).catch(err => alert(`Error al procesar vídeo :( -> ${err.message}`));
+  }
+
+  const updateVideoStatus = (status: VideoStatus) => {
+    dispatch(setVideoStatus({ videoName, status }));
+  }
 
   return (
     <>
@@ -166,6 +182,12 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
             className='me-1'
           >
             Procesar frame
+          </Button>
+          <Button
+            variant='warning'
+            onClick={() => { handleProcess() }}
+          >
+            Procesar vídeo
           </Button>
         </Col>
       </Row>
