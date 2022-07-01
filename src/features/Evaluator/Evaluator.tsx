@@ -2,7 +2,7 @@ import { createNextState } from '@reduxjs/toolkit';
 import React, { useEffect, useState } from 'react'
 import { Button, Col, Row } from 'react-bootstrap'
 import { deepViewApi } from '../../api/api';
-import { ProcessingParameters } from '../../types/Parameters';
+import { defaultParameters, ProcessingParameters } from '../../types/Parameters';
 import { useFormFields } from '../../utils/form-hook';
 import { mergeArrayOfObjects } from '../../utils/objects';
 import { FilterParameters, Parameter } from './FilterParameters';
@@ -22,9 +22,11 @@ const thresholdParameters: Parameter[] = [
   { id: 'thresh', name: 'Umbral', type: 'number', defaultValue: '20' }
 ]
 
+const { kernelWidth: defaultWidth, kernelHeight: defaultHeight } = defaultParameters.preprocess.top_hat;
+
 const tophatParameters: Parameter[] = [
-  { id: 'kernelWidth', name: 'Ancho del kernel', type: 'number', defaultValue: '9' },
-  { id: 'kernelHeight', name: 'Alto del kernel', type: 'number', defaultValue: '9' }
+  { id: 'kernelWidth', name: 'Ancho del kernel', type: 'number', defaultValue: defaultWidth},
+  { id: 'kernelHeight', name: 'Alto del kernel', type: 'number', defaultValue: defaultHeight }
 ]
 
 export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
@@ -33,7 +35,7 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
   const [scaled, setScaled] = useState<boolean>(false);
   const canvasId = 'frameCanvas';
 
-  // Parameters setters 
+  // Parameters fields setters 
   const [thresholdFields, setThresholdFields] = useFormFields(mergeArrayOfObjects(thresholdParameters
     .map(p => ({ [p.id]: p.defaultValue }))
   ))
@@ -45,6 +47,7 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
   // Effects
   useEffect(() => {
     selectFrame()
+    fetchParametersForVideo()
   }, [])
 
   // Handlers
@@ -103,8 +106,8 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
     const parameters: ProcessingParameters = {
       preprocess: {
         top_hat: { 
-          kernelWidth: tophatFields['kernelWidth'], 
-          kernelHeight: tophatFields['kernelHeight'],
+          kernelWidth: tophatFields.kernelWidth, 
+          kernelHeight: tophatFields.kernelHeight,
         }
       }
     }
@@ -132,6 +135,18 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
         console.log(res.message);
       })
       .catch(err => alert(`Error guardando los parámetros :(  : ${err.message}`));
+  }
+
+
+  const fetchParametersForVideo = async () => {
+    const parameters = await deepViewApi.getParametersForVideo(videoName);
+
+    // Set parameters
+    const { kernelWidth, kernelHeight }= parameters.preprocess.top_hat;
+    setTophatFields({
+      kernelWidth,
+      kernelHeight,
+    })
   }
 
   return (

@@ -11,3 +11,14 @@ export interface PreprocessParameters {
 export interface ProcessingParameters {
   preprocess: PreprocessParameters,
 }
+
+
+
+export const defaultParameters: ProcessingParameters = {
+  preprocess: {
+    top_hat: {
+      kernelHeight: 9,
+      kernelWidth: 9,
+    }
+  }
+}
