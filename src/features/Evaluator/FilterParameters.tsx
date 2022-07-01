@@ -49,7 +49,7 @@ export const FilterParameters = (props: FilterParametersProps) => {
                         <FormControl
                           type={parameter.type}
                           onChange={setter}
-                          defaultValue={parameter.defaultValue}
+                          value={parameter.defaultValue}
                         />
                       </InputGroup>
                     </Form.Group>

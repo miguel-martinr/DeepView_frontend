@@ -25,7 +25,7 @@ const thresholdParameters: Parameter[] = [
 const { kernelWidth: defaultWidth, kernelHeight: defaultHeight } = defaultParameters.preprocess.top_hat;
 
 const tophatParameters: Parameter[] = [
-  { id: 'kernelWidth', name: 'Ancho del kernel', type: 'number', defaultValue: defaultWidth},
+  { id: 'kernelWidth', name: 'Ancho del kernel', type: 'number', defaultValue: defaultWidth },
   { id: 'kernelHeight', name: 'Alto del kernel', type: 'number', defaultValue: defaultHeight }
 ]
 
@@ -105,9 +105,15 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
   const getProcessingParamers2 = (): ProcessingParameters => {
     const parameters: ProcessingParameters = {
       preprocess: {
-        top_hat: { 
-          kernelWidth: tophatFields.kernelWidth, 
+        top_hat: {
+          kernelWidth: tophatFields.kernelWidth,
           kernelHeight: tophatFields.kernelHeight,
+        }
+      },
+
+      process: {
+        threshold: {
+          thresh: thresholdFields.thresh,
         }
       }
     }
@@ -142,11 +148,16 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
     const parameters = await deepViewApi.getParametersForVideo(videoName);
 
     // Set parameters
-    const { kernelWidth, kernelHeight }= parameters.preprocess.top_hat;
+    const { kernelWidth, kernelHeight } = parameters.preprocess.top_hat;
     setTophatFields({
       kernelWidth,
       kernelHeight,
-    })
+    });
+
+    const { thresh } = parameters.process.threshold;
+    setThresholdFields({
+      thresh,
+    });
   }
 
   return (
@@ -186,7 +197,9 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
         <Col>
           <FilterParameters
             filterName='Binarizado'
-            parameters={thresholdParameters}
+            parameters={[
+              { id: 'thresh', name: 'Umbral', type: 'number', defaultValue: thresholdFields.thresh }
+            ]}
             setter={setThresholdFields}
           />
         </Col>
@@ -197,7 +210,10 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
         <Col>
           <FilterParameters
             filterName='Top-hat'
-            parameters={tophatParameters}
+            parameters={[
+              { id: 'kernelWidth', name: 'Ancho del kernel', type: 'number', defaultValue: tophatFields.kernelWidth },
+              { id: 'kernelHeight', name: 'Alto del kernel', type: 'number', defaultValue: tophatFields.kernelHeight }
+            ]}
             setter={setTophatFields}
           />
         </Col>
@@ -206,12 +222,12 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
       {/* Save button */}
       <Row className='mt-1'>
         <Col>
-        <Button
-          variant='primary'
-          onClick={() => saveParameters()}
-        >
-          Guardar parámetros
-        </Button>
+          <Button
+            variant='primary'
+            onClick={() => saveParameters()}
+          >
+            Guardar parámetros
+          </Button>
         </Col>
       </Row>
     </>
