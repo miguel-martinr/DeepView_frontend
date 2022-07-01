@@ -146,6 +146,23 @@ export class DeepViewApi {
       throw new Error(response.data.message);
     }
   }
+
+
+  async getParametersForVideo(videoName: string): Promise<ProcessingParameters> {
+    const response = await this.http.get('/parameters', {
+      params: {
+        action: 'get-parameters-for-video',
+        video_name: videoName,
+      }
+    });
+
+    const { data } = response;
+    if (data.success) {
+      return data.parameters;
+    } else {
+      throw new Error(data.message);
+    }
+  }
 }
 
 
