@@ -148,11 +148,7 @@ export const VideoPage = () => {
                 />
               </Col>
             </Row>
-            <Row>
-              <Col>
-                <canvas id='videoCanvas'></canvas>
-              </Col>
-            </Row>
+
             <Row>
               <Col><VideoInfoCard video={video}></VideoInfoCard></Col>
             </Row>
