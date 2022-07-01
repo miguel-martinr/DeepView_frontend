@@ -2,13 +2,14 @@ import { createNextState } from '@reduxjs/toolkit';
 import React, { useEffect, useState } from 'react'
 import { Button, Col, Row } from 'react-bootstrap'
 import { deepViewApi } from '../../api/api';
+import { ProcessingParameters } from '../../types/Parameters';
 import { useFormFields } from '../../utils/form-hook';
 import { mergeArrayOfObjects } from '../../utils/objects';
 import { FilterParameters, Parameter } from './FilterParameters';
 import { GeneralParameters } from './GeneralParameters';
 
 export interface EvaluatorProps {
-  videoId: string,
+  videoId: string, // Html video element id 
   videoName: string,
 }
 
@@ -22,8 +23,8 @@ const thresholdParameters: Parameter[] = [
 ]
 
 const tophatParameters: Parameter[] = [
-  { id: 'width', name: 'Ancho del kernel', type: 'number', defaultValue: '9' },
-  { id: 'height', name: 'Alto del kernel', type: 'number', defaultValue: '9' }
+  { id: 'kernelWidth', name: 'Ancho del kernel', type: 'number', defaultValue: '9' },
+  { id: 'kernelHeight', name: 'Alto del kernel', type: 'number', defaultValue: '9' }
 ]
 
 export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
@@ -81,6 +82,7 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
       })
   }
 
+  // TODO: it should return proper shape (see in types)
   const getProcessingParameters = () => {
     return {
       "preprocess": {
@@ -96,6 +98,20 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
     }
   }
 
+  // Temporal. It returns parameters with proper type
+  const getProcessingParamers2 = (): ProcessingParameters => {
+    const parameters: ProcessingParameters = {
+      preprocess: {
+        top_hat: { 
+          kernelWidth: tophatFields['kernelWidth'], 
+          kernelHeight: tophatFields['kernelHeight'],
+        }
+      }
+    }
+
+    return parameters;
+  }
+
   const drawObject = (ctx: CanvasRenderingContext2D, object: ParticleObject) => {
     ctx.beginPath()
     const { circle } = object;
@@ -107,6 +123,15 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
     ctx.lineWidth = 5
     ctx.strokeStyle = '#00ff00';
     ctx.stroke()
+  }
+
+  const saveParameters = () => {
+    const parameters = getProcessingParamers2();
+    deepViewApi.saveParameters(videoName, parameters)
+      .then((res) => {
+        console.log(res.message);
+      })
+      .catch(err => alert(`Error guardando los parámetros :(  : ${err.message}`));
   }
 
   return (
@@ -134,11 +159,14 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
           </Button>
         </Col>
       </Row>
+      {/* Parameters */}
       <Row className='mt-3'>
         <Col>
           <h4>Parámetros</h4>
         </Col>
       </Row>
+
+      {/* Threshold */}
       <Row>
         <Col>
           <FilterParameters
@@ -148,6 +176,8 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
           />
         </Col>
       </Row>
+
+      {/* Tophat */}
       <Row>
         <Col>
           <FilterParameters
@@ -157,13 +187,15 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
           />
         </Col>
       </Row>
+
+      {/* Save button */}
       <Row className='mt-1'>
         <Col>
         <Button
           variant='primary'
+          onClick={() => saveParameters()}
         >
           Guardar parámetros
-
         </Button>
         </Col>
       </Row>

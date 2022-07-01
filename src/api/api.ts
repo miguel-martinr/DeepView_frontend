@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
+import { ProcessingParameters } from '../types/Parameters';
 
 
 function authenticate(config: AxiosRequestConfig<any>) {
@@ -127,6 +128,23 @@ export class DeepViewApi {
 
   getVideoStaticPath(videoName: string) {
     return BASE_URL + 'static/videos/' + videoName;
+  }
+
+  async saveParameters(videoName: string, parameters: ProcessingParameters) {
+    const response = await this.http.post('/parameters', {
+      action: 'add',
+      payload: {
+        parameters,
+        video_name: videoName,
+      }
+    });
+
+    const { data } = response;
+    if (data.success) {
+      return data;
+    } else {
+      throw new Error(response.data.message);
+    }
   }
 }
 
