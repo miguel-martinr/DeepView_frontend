@@ -44,7 +44,7 @@ export const VideoPage = () => {
   }
 
   const videoId = "videoInput";
-  const canvasId = "frameCanvas";
+  
 
   const statusWatcher = new StatusWatcher({ autoClear: false, currentStatus: video.status })
   const label = unit === 'seconds' ? 'Moda de partículas cada 30 frames' :
