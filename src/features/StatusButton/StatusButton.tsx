@@ -4,10 +4,11 @@ import { VideoStatus } from '../../types/Video'
 
 import './styles.css'
 export interface StatusButtonProps {
-  status: VideoStatus
+  status: VideoStatus,
+  percentage?: number,
 }
 
-export const StatusButton = ({ status }: StatusButtonProps) => {
+export const StatusButton = ({ status, percentage }: StatusButtonProps) => {
 
   const StatusType = {
     processing: { message: 'Procesando', color: 'warning', buttonVariant: '' },
@@ -28,7 +29,7 @@ export const StatusButton = ({ status }: StatusButtonProps) => {
           variant={StatusType[status].color}
           className="me-2"
         /> : null}
-      {StatusType[status].message}
+      {StatusType[status].message + (status === 'processing' && percentage !== undefined ? ` ${percentage}%` : '')}
     </Button>
   )
 }

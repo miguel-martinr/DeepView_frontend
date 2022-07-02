@@ -1,4 +1,3 @@
-import { ChartData } from 'chart.js';
 import React, { useEffect, useState } from 'react'
 import { Button, ButtonGroup, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -8,9 +7,9 @@ import { BarChart } from '../features/Charts/BarChart';
 import { StatusButton } from '../features/StatusButton/StatusButton';
 import { VideoInfoCard } from '../features/VideoInfo/VideoInfoCard';
 import { VideoPlayer } from '../features/VideoPlayer/VideoPlayer';
-import { setVideo, setVideoData, setVideoStatus } from '../state/workspace-slice';
+import { setVideoData, setVideoStatus } from '../state/workspace-slice';
 import { StatusWatcher } from '../utils/StatusWatcher';
-import { Video, VideoData, VideoDataUnit, VideoStatus } from '../types/Video';
+import { VideoDataUnit, VideoStatus } from '../types/Video';
 import { groupArr } from '../utils/math';
 import { Evaluator } from '../features/Evaluator/Evaluator';
 
@@ -20,7 +19,6 @@ type VideoPageMode = 'evaluation' | 'analysis';
 export const VideoPage = () => {
 
   const navigate = useNavigate();
-  const [drawInterval, setDrawInterval] = useState(-1);
   const { name } = useParams();
   if (!name) {
     navigate(-1);
@@ -36,6 +34,7 @@ export const VideoPage = () => {
   const [fetchingData, setFetchingData] = useState(false);
   const [unit, setUnit] = useState<VideoDataUnit>('hours');
   const [mode, setMode] = useState<VideoPageMode>('analysis');
+  const [percentage, setPercentage] = useState<number | undefined>(undefined);
 
   if (!video) {
     navigate(-1);
@@ -44,9 +43,14 @@ export const VideoPage = () => {
   }
 
   const videoId = "videoInput";
-  
 
-  const statusWatcher = new StatusWatcher({ autoClear: false, currentStatus: video.status })
+
+  const statusWatcher = new StatusWatcher({
+    autoClear: false,
+    currentStatus: video.status,
+    onResponse: (res) => setPercentage(res.percentage)
+  })
+
   const label = unit === 'seconds' ? 'Moda de partículas cada 30 frames' :
     `Partículas por ${unit === 'minutes' ? 'minuto' : 'hora'}`;
 
@@ -100,8 +104,8 @@ export const VideoPage = () => {
     statusWatcher.startWatching(video.name);
   }
 
-  const setStatus = (status: VideoStatus) => {    
-    dispatch(setVideoStatus({videoName: video.name, status}));
+  const setStatus = (status: VideoStatus) => {
+    dispatch(setVideoStatus({ videoName: video.name, status }));
   }
 
   const updateUnit = (newUnit: VideoDataUnit) => {
@@ -153,13 +157,11 @@ export const VideoPage = () => {
           </Col>
           <Col sm={8}>
             <Row>
-              <Col className='text-end' sm={{ span: 3, offset: 6 }}>
-                <Button onClick={() => fetchData(unit)}>
+              <Col className='text-end'>
+                <Button onClick={() => fetchData(unit)} className='me-1'>
                   {fetchingData ? <Spinner animation='border' size='sm' /> : 'Actualizar'}
                 </Button>
-              </Col>
-              <Col className='text-end' sm={3}>
-                <StatusButton status={video.status} />
+                <StatusButton status={video.status} percentage={percentage} />
               </Col>
             </Row>
             {
@@ -200,7 +202,7 @@ export const VideoPage = () => {
                   </Row>
                 </>
                 :
-                <Evaluator videoId={videoId} videoName={video.name}/>
+                <Evaluator videoId={videoId} videoName={video.name} />
             }
           </Col>
         </Row>

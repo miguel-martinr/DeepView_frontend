@@ -85,7 +85,7 @@ export class DeepViewApi {
 
     const { success, message } = response.data;
     if (success) {
-      return message;
+      return response.data;
     } else {
       throw new Error(message);
     }
