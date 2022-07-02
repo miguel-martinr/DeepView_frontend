@@ -8,12 +8,14 @@ import { defaultParameters, ProcessingParameters } from '../../types/Parameters'
 import { VideoStatus } from '../../types/Video';
 import { useFormFields } from '../../utils/form-hook';
 import { mergeArrayOfObjects } from '../../utils/objects';
+import { StatusWatcher } from '../../utils/StatusWatcher';
 import { FilterParameters, Parameter } from './FilterParameters';
-import { GeneralParameters } from './GeneralParameters';
 
 export interface EvaluatorProps {
   videoId: string, // Html video element id 
   videoName: string,
+  statusWatcherRef: React.MutableRefObject<StatusWatcher>,
+  watchStatusCallBack: () => void,
 }
 
 export interface ParticleObject {
@@ -32,13 +34,18 @@ const tophatParameters: Parameter[] = [
   { id: 'kernelHeight', name: 'Alto del kernel', type: 'number', defaultValue: defaultHeight }
 ]
 
-export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
+export const Evaluator = ({ 
+  videoId, 
+  videoName, 
+  statusWatcherRef, 
+  watchStatusCallBack: wacthStatus }: EvaluatorProps) => {
 
   // Useful hooks
   const dispatch = useAppDispatch();
 
   // Internal state
   const [scaled, setScaled] = useState<boolean>(false);
+  const statusWatcher = statusWatcherRef.current;
   const canvasId = 'frameCanvas';
 
   // Parameters fields setters 
@@ -151,6 +158,9 @@ export const Evaluator = ({ videoId, videoName }: EvaluatorProps) => {
 
   const handleProcess = () => {
     deepViewApi.processVideo(videoName).then((res: any) => {
+      statusWatcher.clear();
+      statusWatcher.setCurrentStatus('processing');
+      wacthStatus();
       updateVideoStatus('processing');
       console.log(`Vídeo ${videoName} is being processed: ${res}`);
     }).catch(err => alert(`Error al procesar vídeo :( -> ${err.message}`));

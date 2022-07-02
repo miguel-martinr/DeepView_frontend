@@ -61,8 +61,6 @@ export const VideoRow = ({ name }: VideoRowProps) => {
     watcher.startWatching(video.name);
   }
 
-
-
   const navigateToVideo = () => {
     dispatch(setCurrentVideo(video));
     navigate(`/video/${video.name}`);

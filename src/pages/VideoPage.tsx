@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Button, ButtonGroup, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import { deepViewApi } from '../api/api';
@@ -35,6 +35,12 @@ export const VideoPage = () => {
   const [unit, setUnit] = useState<VideoDataUnit>('hours');
   const [mode, setMode] = useState<VideoPageMode>('analysis');
   const [percentage, setPercentage] = useState<number | undefined>(0);
+  const watcherRef = useRef<StatusWatcher>(new StatusWatcher({
+    autoClear: false,
+    currentStatus: video.status,
+    onResponse: (res) => setPercentage(res.percentage)
+  }));
+  const statusWatcher = watcherRef.current;
 
   if (!video) {
     navigate(-1);
@@ -44,17 +50,11 @@ export const VideoPage = () => {
 
   const videoId = "videoInput";
 
-
-  const statusWatcher = new StatusWatcher({
-    autoClear: false,
-    currentStatus: video.status,
-    onResponse: (res) => setPercentage(res.percentage)
-  })
-
   const label = unit === 'seconds' ? 'Moda de partículas cada 30 frames' :
     `Partículas por ${unit === 'minutes' ? 'minuto' : 'hora'}`;
 
 
+  // Effects
   useEffect(() => {
     fetchData(unit);
     watchStatus();
@@ -94,7 +94,6 @@ export const VideoPage = () => {
     }))
   }
 
-
   const watchStatus = () => {
     statusWatcher.addEventListener('statusChanged', (e) => {
       const ev = e as CustomEvent;
@@ -105,6 +104,7 @@ export const VideoPage = () => {
   }
 
   const setStatus = (status: VideoStatus) => {
+
     dispatch(setVideoStatus({ videoName: video.name, status }));
   }
 
@@ -202,7 +202,12 @@ export const VideoPage = () => {
                   </Row>
                 </>
                 :
-                <Evaluator videoId={videoId} videoName={video.name} />
+                <Evaluator
+                  videoId={videoId}
+                  videoName={video.name}
+                  statusWatcherRef={watcherRef}
+                  watchStatusCallBack={watchStatus}
+                />
             }
           </Col>
         </Row>
