@@ -3,7 +3,7 @@ import { Button, Col, Row } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import { deepViewApi } from '../../api/api'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
-import { setCurrentVideo, setVideo } from '../../state/workspace-slice'
+import { setCurrentVideo, setVideo, setVideoSpentSeconds } from '../../state/workspace-slice'
 import { VideoStatus } from '../../types/Video'
 import { StatusWatcher } from '../../utils/StatusWatcher'
 import { StatusButton } from '../StatusButton/StatusButton'
@@ -28,6 +28,12 @@ export const VideoRow = ({ name }: VideoRowProps) => {
   useEffect(() => {
     if (video.status === 'processing')
       wacthStatus();
+
+    if (video.status === 'processed')
+      deepViewApi.checkVideoStatus(video.name)
+        .then(({ spent_seconds: spentSeconds })=> {
+          dispatch(setVideoSpentSeconds({videoName: video.name, spentSeconds}))
+        });
 
     return () => watcher.clear();
   }, [])
