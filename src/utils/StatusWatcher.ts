@@ -35,11 +35,14 @@ export class StatusWatcher extends EventTarget {
       console.log('watching ', videoName);
 
       if (status !== obj.config.currentStatus) {
+        
         obj.dispatchEvent(new CustomEvent('statusChanged', {
           detail: status
         }));
+
         if (obj.config.autoClear)
           clearInterval(interval);
+          
       }
     }, obj.config.seconds * 1000)
 
