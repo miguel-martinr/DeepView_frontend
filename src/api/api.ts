@@ -87,6 +87,7 @@ export class DeepViewApi {
     if (success) {
       return response.data;
     } else {
+      alert(`Error chequeando status: ${message}`)
       throw new Error(message);
     }
   }
