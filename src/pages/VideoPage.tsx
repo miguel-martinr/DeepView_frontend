@@ -34,7 +34,7 @@ export const VideoPage = () => {
   const [fetchingData, setFetchingData] = useState(false);
   const [unit, setUnit] = useState<VideoDataUnit>('hours');
   const [mode, setMode] = useState<VideoPageMode>('analysis');
-  const [percentage, setPercentage] = useState<number | undefined>(undefined);
+  const [percentage, setPercentage] = useState<number | undefined>(0);
 
   if (!video) {
     navigate(-1);
