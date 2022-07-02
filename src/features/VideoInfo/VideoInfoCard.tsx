@@ -2,6 +2,7 @@ import React from 'react'
 import { Card, Form, InputGroup } from 'react-bootstrap'
 import { Video } from '../../types/Video'
 import { getFormattedTime } from '../../utils/time'
+import { Tooltip } from '../Tooltip/Tooltip'
 import './styles.css'
 
 export interface VideoInfoCardProps {
@@ -40,7 +41,9 @@ export const VideoInfoCard = (props: VideoInfoCardProps) => {
             <InputGroup>
               <InputGroup.Text>{'T. Proc.'}</InputGroup.Text>
               <Form.Control type="text" value={getFormattedDuration(Math.round(video.spentSeconds))} readOnly style={inputStyle} />
-              <InputGroup.Text className='normal-text'>{'?'}</InputGroup.Text>
+              <Tooltip text='Tiempo de procesamiento'>
+                <InputGroup.Text className='normal-text'>{'?'}</InputGroup.Text>
+              </Tooltip>
             </InputGroup>
             : null
         }
