@@ -91,8 +91,7 @@ export const VideoRow = ({ name }: VideoRowProps) => {
           <Col sm={12}>
             <div className="btn-group" role="group" aria-label="Basic example">
               <Button onClick={() => navigateToVideo()}>Abrir</Button>
-              <Button
-                disabled={video.status === 'stopped'}
+              <Button                
                 variant={video.status === 'processing' ? 'warning' : 'success'}
                 onClick={video.status === 'processing' ? handleStopProcessing : handleProcess}
               >
