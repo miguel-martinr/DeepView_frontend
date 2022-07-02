@@ -38,8 +38,9 @@ export const VideoInfoCard = (props: VideoInfoCardProps) => {
         {
           video.spentSeconds !== undefined ?
             <InputGroup>
-              <InputGroup.Text>T. Proc.</InputGroup.Text>
+              <InputGroup.Text>{'T. Proc.'}</InputGroup.Text>
               <Form.Control type="text" value={getFormattedDuration(Math.round(video.spentSeconds))} readOnly style={inputStyle} />
+              <InputGroup.Text className='normal-text'>{'?'}</InputGroup.Text>
             </InputGroup>
             : null
         }
