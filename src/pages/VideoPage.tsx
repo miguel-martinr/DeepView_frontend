@@ -7,7 +7,7 @@ import { BarChart } from '../features/Charts/BarChart';
 import { StatusButton } from '../features/StatusButton/StatusButton';
 import { VideoInfoCard } from '../features/VideoInfo/VideoInfoCard';
 import { VideoPlayer } from '../features/VideoPlayer/VideoPlayer';
-import { setVideoData, setVideoStatus } from '../state/workspace-slice';
+import { setVideoData, setVideoSpentSeconds, setVideoStatus } from '../state/workspace-slice';
 import { StatusWatcher } from '../utils/StatusWatcher';
 import { VideoDataUnit, VideoStatus } from '../types/Video';
 import { groupArr } from '../utils/math';
@@ -95,6 +95,13 @@ export const VideoPage = () => {
   }
 
   const watchStatus = () => {
+    // Listen for processing completion
+    statusWatcher.addEventListener('isProcessed', (e) => {
+      const ev = e as CustomEvent;
+      setSpentSeconds(ev.detail);
+    });
+
+    // Listen for status changes
     statusWatcher.addEventListener('statusChanged', (e) => {
       const ev = e as CustomEvent;
       setStatus(ev.detail);
@@ -104,8 +111,11 @@ export const VideoPage = () => {
   }
 
   const setStatus = (status: VideoStatus) => {
-
     dispatch(setVideoStatus({ videoName: video.name, status }));
+  }
+
+  const setSpentSeconds = (spentSeconds: number) => {
+    dispatch(setVideoSpentSeconds({ videoName: video.name, spentSeconds }));
   }
 
   const updateUnit = (newUnit: VideoDataUnit) => {

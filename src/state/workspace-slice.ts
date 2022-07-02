@@ -49,6 +49,14 @@ const workspaceSlice = createSlice({
       if (!state.videos[videoName]) return;
 
       state.videos[videoName].status = status;
+    },
+
+    setVideoSpentSeconds(state, action: PayloadAction<{videoName: string, spentSeconds: number}>) {
+      const { videoName, spentSeconds } = action.payload;
+
+      if (!state.videos[videoName]) return;
+
+      state.videos[videoName].spentSeconds = spentSeconds;
     }
   }
 });
@@ -58,7 +66,8 @@ export const {
   setVideo,
   setVideoData,
   setVideos,
-  setVideoStatus
+  setVideoStatus,
+  setVideoSpentSeconds
 
 } = workspaceSlice.actions;
 

@@ -36,10 +36,10 @@ export const VideoInfoCard = (props: VideoInfoCardProps) => {
           <Form.Control type="text" value={Math.round(video.size_in_MB * 100) / 100 + ' MB'} readOnly style={inputStyle} />
         </InputGroup>
         {
-          video.secondsSpent !== undefined ?
+          video.spentSeconds !== undefined ?
             <InputGroup>
               <InputGroup.Text>T. Proc.</InputGroup.Text>
-              <Form.Control type="number" value={getFormattedDuration(video.secondsSpent)} readOnly style={inputStyle} />
+              <Form.Control type="text" value={getFormattedDuration(Math.round(video.spentSeconds))} readOnly style={inputStyle} />
             </InputGroup>
             : null
         }

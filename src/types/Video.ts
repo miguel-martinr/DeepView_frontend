@@ -30,5 +30,5 @@ export interface Video {
   // resolution: string,
   status: VideoStatus,
   data: VideoData,
-  secondsSpent?: number,
+  spentSeconds?: number,
 }
