@@ -16,7 +16,16 @@ export interface Frame {
 export type VideoStatus = 'processing' | 'processed' | 'stopped' | 'unprocessed';
 export type VideoDataTimeUnit = 'seconds' | 'minutes' | 'hours';
 
-// export type VideoData = {unit: VideoDataUnit, values: number[]};
+export interface ParticlesData {
+  by_time_unit: {
+    [key in VideoDataTimeUnit]: number[]
+  },
+}
+
+export interface EventsData {
+  seconds_with_events: number[],
+}
+
 export type VideoData = {
   seconds: number[],
   minutes: number[],
