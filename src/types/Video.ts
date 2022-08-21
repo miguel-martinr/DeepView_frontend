@@ -26,11 +26,17 @@ export interface EventsData {
   seconds_with_events: number[],
 }
 
-export type VideoData = {
-  seconds: number[],
-  minutes: number[],
-  hours: number[],
+export interface VideoData {
+  particles: ParticlesData,
+  events: EventsData,
 }
+
+
+// export type VideoData = {
+//   seconds: number[],
+//   minutes: number[],
+//   hours: number[],
+// }
 export interface Video {
   name: string,
   size_in_MB: number,

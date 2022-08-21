@@ -68,10 +68,14 @@ export const VideoPage = () => {
   // Handlers
   const fetchData = async (unitToFetch: VideoDataTimeUnit) => {
     if (!video) return;
+
+    // So the spinner is shown
     setFetchingData(true);
+
+    // Fetch data from API
     deepViewApi.fetchVideoDataResults(video.name, unitToFetch)
       .then((data) => {
-        setData(data.particles.by_time_unit, unitToFetch)
+        setParticlesData(data.particles.byTimeUnit, unitToFetch)
       })
       .catch(err => {
 
@@ -79,14 +83,14 @@ export const VideoPage = () => {
       .finally(() => setFetchingData(false));
   }
 
-  const setData = (data: number[], targetUnit: VideoDataTimeUnit) => {
-
+  
+  const setParticlesData = (particlesByUnit: number[], targetUnit: VideoDataTimeUnit) => {
 
     const units: VideoDataTimeUnit[] = ['seconds', 'minutes', 'hours'];
-    let calculatedData: any = { [targetUnit]: data };
+    let calculatedData: any = { [targetUnit]: particlesByUnit };
 
     for (let i = units.indexOf(targetUnit) + 1; i < units.length; i++) {
-      const newUnit = groupArr<number>(data, Math.pow(60, i))
+      const newUnit = groupArr<number>(particlesByUnit, Math.pow(60, i))
         .map(group => group.reduce((sum, cur) => sum + cur, 0));
       console.log(`NEWUNIT: ${newUnit}`)
       calculatedData[units[i]] = newUnit;
