@@ -68,7 +68,7 @@ export const VideoPage = () => {
   const fetchData = async (unitToFetch: VideoDataUnit) => {
     if (!video) return;
     setFetchingData(true);
-    deepViewApi.fetchParticlesAverageQuantity(video.name, unitToFetch)
+    deepViewApi.fetchVideoDataResults(video.name, unitToFetch)
       .then((data: number[]) => {
         setData(data, unitToFetch)
       })

@@ -92,12 +92,11 @@ export class DeepViewApi {
     }
   }
 
-  async fetchParticlesAverageQuantity(video_name: string, unit = 'seconds') {
+  async fetchVideoDataResults(video_name: string, unit = 'seconds') {
     const response = await this.http.get('/video', {
       params: {
         action: 'get-data',
-        video_name,
-        type: 'ParticlesAverage',
+        video_name,        
         unit,
       }
     });
