@@ -1,4 +1,5 @@
 export interface DeepViewAPIResponse {
   success: boolean,
-  data: any,
+  data?: any,
+  message?: string,
 }

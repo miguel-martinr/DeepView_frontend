@@ -14,7 +14,7 @@ export interface Frame {
 // }
 
 export type VideoStatus = 'processing' | 'processed' | 'stopped' | 'unprocessed';
-export type VideoDataUnit = 'seconds' | 'minutes' | 'hours';
+export type VideoDataTimeUnit = 'seconds' | 'minutes' | 'hours';
 
 // export type VideoData = {unit: VideoDataUnit, values: number[]};
 export type VideoData = {

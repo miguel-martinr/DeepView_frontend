@@ -1,11 +1,12 @@
+import { VideoDataTimeUnit } from "../Video"
 import { DeepViewAPIResponse } from "./response"
 
 
-export type TimeUnit = 'secods' | 'minutes' | 'hours';
+
 
 export interface ParticlesData {
   by_time_unit: number[],
-  unit: TimeUnit,
+  unit: VideoDataTimeUnit,
 }
 
 export interface EventsData {

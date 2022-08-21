@@ -9,9 +9,10 @@ import { VideoInfoCard } from '../features/VideoInfo/VideoInfoCard';
 import { VideoPlayer } from '../features/VideoPlayer/VideoPlayer';
 import { setVideoData, setVideoSpentSeconds, setVideoStatus } from '../state/workspace-slice';
 import { StatusWatcher } from '../utils/StatusWatcher';
-import { VideoDataUnit, VideoStatus } from '../types/Video';
+import { VideoDataTimeUnit, VideoStatus } from '../types/Video';
 import { groupArr } from '../utils/math';
 import { Evaluator } from '../features/Evaluator/Evaluator';
+import { VideoDataResponse } from '../types/Responses/get-data';
 
 
 type VideoPageMode = 'evaluation' | 'analysis';
@@ -32,7 +33,7 @@ export const VideoPage = () => {
   // Internal state
   const video = useAppSelector(({ workspace }) => workspace.videos[name]);
   const [fetchingData, setFetchingData] = useState(false);
-  const [unit, setUnit] = useState<VideoDataUnit>('hours');
+  const [unit, setUnit] = useState<VideoDataTimeUnit>('hours');
   const [mode, setMode] = useState<VideoPageMode>('analysis');
   const [percentage, setPercentage] = useState<number | undefined>(0);
   const watcherRef = useRef<StatusWatcher>(new StatusWatcher({
@@ -65,12 +66,12 @@ export const VideoPage = () => {
   }, [])
 
   // Handlers
-  const fetchData = async (unitToFetch: VideoDataUnit) => {
+  const fetchData = async (unitToFetch: VideoDataTimeUnit) => {
     if (!video) return;
     setFetchingData(true);
     deepViewApi.fetchVideoDataResults(video.name, unitToFetch)
-      .then((data: number[]) => {
-        setData(data, unitToFetch)
+      .then((data) => {
+        setData(data.particles.by_time_unit, unitToFetch)
       })
       .catch(err => {
 
@@ -78,8 +79,10 @@ export const VideoPage = () => {
       .finally(() => setFetchingData(false));
   }
 
-  const setData = (data: number[], targetUnit: VideoDataUnit) => {
-    const units: VideoDataUnit[] = ['seconds', 'minutes', 'hours'];
+  const setData = (data: number[], targetUnit: VideoDataTimeUnit) => {
+
+
+    const units: VideoDataTimeUnit[] = ['seconds', 'minutes', 'hours'];
     let calculatedData: any = { [targetUnit]: data };
 
     for (let i = units.indexOf(targetUnit) + 1; i < units.length; i++) {
@@ -118,7 +121,7 @@ export const VideoPage = () => {
     dispatch(setVideoSpentSeconds({ videoName: video.name, spentSeconds }));
   }
 
-  const updateUnit = (newUnit: VideoDataUnit) => {
+  const updateUnit = (newUnit: VideoDataTimeUnit) => {
     const fetchedData = video.data;
     if (fetchedData[newUnit].length === 0)
       fetchData(newUnit);
