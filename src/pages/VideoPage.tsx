@@ -190,6 +190,9 @@ export const VideoPage = () => {
             {
               mode === 'analysis' ?
                 <>
+                  <Row className='mt-1 ms-1'>
+                    <Col><h2>Partículas</h2></Col>
+                  </Row>
                   <Row>
                     <Col>
                       <BarChart
