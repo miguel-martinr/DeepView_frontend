@@ -12,6 +12,8 @@ import { StatusWatcher } from '../utils/StatusWatcher';
 import { VideoDataTimeUnit, VideoStatus } from '../types/Video';
 import { groupArr } from '../utils/math';
 import { Evaluator } from '../features/Evaluator/Evaluator';
+import { EventsTable } from '../features/Events/EventsTable';
+import { EventsCard } from '../features/Events/EventsCard';
 
 
 type VideoPageMode = 'evaluation' | 'analysis';
@@ -93,7 +95,7 @@ export const VideoPage = () => {
       const currentUnit = units[i];
       const particlesByCurrentTimeUnit = groupArr<number>(particlesByUnit, Math.pow(60, i))
         .map(group => group.reduce((sum, cur) => sum + cur, 0));
-      
+
       console.log(`NEWUNIT: ${particlesByCurrentTimeUnit}`)
       calculatedData[currentUnit] = particlesByCurrentTimeUnit;
     }
@@ -149,6 +151,7 @@ export const VideoPage = () => {
       <Container className='p-5' fluid>
         <Row>
           <Col sm={4}>
+            {/* Mode buttons */}
             <Row>
               <Col className='mb-2'>
                 <Button
@@ -165,6 +168,8 @@ export const VideoPage = () => {
                 </Button>
               </Col>
             </Row>
+
+            {/* Video player */}
             <Row>
               <Col>
                 <VideoPlayer
@@ -174,8 +179,16 @@ export const VideoPage = () => {
               </Col>
             </Row>
 
+            {/* Video info */}
             <Row>
               <Col><VideoInfoCard video={video}></VideoInfoCard></Col>
+            </Row>
+
+            {/* Events table */}
+            <Row className="mt-2">
+              <Col>
+                <EventsCard events={{ secondsWithEvents: [2, 63,2, 63,2, 63,2, 63,2, 63,2, 63,2, 63,2, 63,2, 63,2, 63,2, 63,] }} />
+              </Col>
             </Row>
           </Col>
           <Col sm={8}>
@@ -225,6 +238,9 @@ export const VideoPage = () => {
                         </Button>
                       </ButtonGroup>
                     </Col>
+                  </Row>
+                  <Row className='mt-3 ms-1'>
+                    <Col><h2>Eventos</h2></Col>
                   </Row>
                 </>
                 :
