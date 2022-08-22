@@ -7,12 +7,11 @@ import { BarChart } from '../features/Charts/BarChart';
 import { StatusButton } from '../features/StatusButton/StatusButton';
 import { VideoInfoCard } from '../features/VideoInfo/VideoInfoCard';
 import { VideoPlayer } from '../features/VideoPlayer/VideoPlayer';
-import { setVideoData, setVideoSpentSeconds, setVideoStatus } from '../state/workspace-slice';
+import { setParticlesDataByTimeUnit, setVideoSpentSeconds, setVideoStatus } from '../state/workspace-slice';
 import { StatusWatcher } from '../utils/StatusWatcher';
 import { VideoDataTimeUnit, VideoStatus } from '../types/Video';
 import { groupArr } from '../utils/math';
 import { Evaluator } from '../features/Evaluator/Evaluator';
-import { VideoDataResponse } from '../types/Responses/get-data';
 
 
 type VideoPageMode = 'evaluation' | 'analysis';
@@ -75,7 +74,7 @@ export const VideoPage = () => {
     // Fetch data from API
     deepViewApi.fetchVideoDataResults(video.name, unitToFetch)
       .then((data) => {
-        setParticlesData(data.particles.byTimeUnit, unitToFetch)
+        setParticlesData(data.particles.by_time_unit, unitToFetch)
       })
       .catch(err => {
 
@@ -83,21 +82,26 @@ export const VideoPage = () => {
       .finally(() => setFetchingData(false));
   }
 
-  
+  // Calculates and sets data in those time units that are greater than the targetUnit
   const setParticlesData = (particlesByUnit: number[], targetUnit: VideoDataTimeUnit) => {
 
+    // Calculate data 
     const units: VideoDataTimeUnit[] = ['seconds', 'minutes', 'hours'];
     let calculatedData: any = { [targetUnit]: particlesByUnit };
 
     for (let i = units.indexOf(targetUnit) + 1; i < units.length; i++) {
-      const newUnit = groupArr<number>(particlesByUnit, Math.pow(60, i))
+      const currentUnit = units[i];
+      const particlesByCurrentTimeUnit = groupArr<number>(particlesByUnit, Math.pow(60, i))
         .map(group => group.reduce((sum, cur) => sum + cur, 0));
-      console.log(`NEWUNIT: ${newUnit}`)
-      calculatedData[units[i]] = newUnit;
+      
+      console.log(`NEWUNIT: ${particlesByCurrentTimeUnit}`)
+      calculatedData[currentUnit] = particlesByCurrentTimeUnit;
     }
-    dispatch(setVideoData({
+
+    // Set data
+    dispatch(setParticlesDataByTimeUnit({
       videoName: video.name,
-      data: calculatedData,
+      particlesByTimeUnit: calculatedData
     }))
   }
 
@@ -125,10 +129,12 @@ export const VideoPage = () => {
     dispatch(setVideoSpentSeconds({ videoName: video.name, spentSeconds }));
   }
 
-  const updateUnit = (newUnit: VideoDataTimeUnit) => {
-    const fetchedData = video.data;
-    if (fetchedData[newUnit].length === 0)
+  const updateParticlesDataUnit = (newUnit: VideoDataTimeUnit) => {
+    const particlesData = video.data.particles.byTimeUnit;
+
+    if (particlesData[newUnit].length === 0)
       fetchData(newUnit);
+
     setUnit(newUnit);
   }
 
@@ -189,12 +195,12 @@ export const VideoPage = () => {
                       <BarChart
                         height={100}
                         data={{
-                          labels: video.data[unit].map((_, i) => i),
+                          labels: video.data.particles.byTimeUnit[unit].map((_, i) => i),
                           datasets: [
                             {
                               label,
                               backgroundColor: '#f87979',
-                              data: video.data[unit],
+                              data: video.data.particles.byTimeUnit[unit],
                             }
                           ]
                         }}
@@ -205,13 +211,13 @@ export const VideoPage = () => {
                   <Row>
                     <Col>
                       <ButtonGroup>
-                        <Button variant={unit === 'seconds' ? 'primary' : ''} className='active' onClick={() => updateUnit('seconds')}>
+                        <Button variant={unit === 'seconds' ? 'primary' : ''} className='active' onClick={() => updateParticlesDataUnit('seconds')}>
                           Segundos
                         </Button>
-                        <Button variant={unit === 'minutes' ? 'primary' : ''} onClick={() => updateUnit('minutes')}>
+                        <Button variant={unit === 'minutes' ? 'primary' : ''} onClick={() => updateParticlesDataUnit('minutes')}>
                           Minutos
                         </Button>
-                        <Button variant={unit === 'hours' ? 'primary' : ''} onClick={() => updateUnit('hours')}>
+                        <Button variant={unit === 'hours' ? 'primary' : ''} onClick={() => updateParticlesDataUnit('hours')}>
                           Horas
                         </Button>
                       </ButtonGroup>

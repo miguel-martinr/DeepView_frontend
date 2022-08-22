@@ -4,7 +4,7 @@ import { VideoRow } from '../features/VideoRow'
 import { Button, Col, Container, Fade, Row, Spinner } from 'react-bootstrap';
 import { setVideos } from '../state/workspace-slice';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { Video } from '../types/Video';
+import { defaultVideoData, Video } from '../types/Video';
 import './styles.css'
 
 
@@ -29,7 +29,7 @@ export const VideosPage = () => {
     setIsLoading(true);
     deepViewApi.fetchAvailableVideos().then((fetchedVideos: Video[]) => {
 
-      dispatch(setVideos(fetchedVideos.map(v => ({ ...v, data: { seconds: [], minutes: [], hours: [] } }))));
+      dispatch(setVideos(fetchedVideos.map(v => ({ ...v, data: defaultVideoData }))));
       setIsLoading(false);
     }).catch(err => {
       console.log(err);

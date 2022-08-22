@@ -16,14 +16,16 @@ export interface Frame {
 export type VideoStatus = 'processing' | 'processed' | 'stopped' | 'unprocessed';
 export type VideoDataTimeUnit = 'seconds' | 'minutes' | 'hours';
 
+
+export type ParticlesByTimeUnit = {
+  [key in VideoDataTimeUnit]: number[]
+}
 export interface ParticlesData {
-  by_time_unit: {
-    [key in VideoDataTimeUnit]: number[]
-  },
+  byTimeUnit: ParticlesByTimeUnit,
 }
 
 export interface EventsData {
-  seconds_with_events: number[],
+  secondsWithEvents: number[],
 }
 
 export interface VideoData {
@@ -31,12 +33,6 @@ export interface VideoData {
   events: EventsData,
 }
 
-
-// export type VideoData = {
-//   seconds: number[],
-//   minutes: number[],
-//   hours: number[],
-// }
 export interface Video {
   name: string,
   size_in_MB: number,
@@ -46,4 +42,15 @@ export interface Video {
   status: VideoStatus,
   data: VideoData,
   spentSeconds?: number,
+}
+
+
+export const defaultVideoData: VideoData = {
+  particles: {
+    byTimeUnit: {seconds: [], minutes: [], hours: []},
+
+  },
+  events: {
+    secondsWithEvents: [],
+  },
 }

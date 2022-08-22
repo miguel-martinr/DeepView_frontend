@@ -5,12 +5,12 @@ import { DeepViewAPIResponse } from "./response"
 
 
 export interface ParticlesData {
-  byTimeUnit: number[],
+  by_time_unit: number[],
   unit: VideoDataTimeUnit,
 }
 
 export interface EventsData {
-  secondsWithEvents: number[],
+  seconds_with_events: number[],
 }
 
 
