@@ -1,15 +1,17 @@
-import { createNextState } from '@reduxjs/toolkit';
 import React, { useEffect, useState } from 'react'
 import { Button, Col, Row } from 'react-bootstrap'
 import { deepViewApi } from '../../api/api';
-import { useAppDispatch } from '../../app/hooks';
-import { setVideoStatus } from '../../state/workspace-slice';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { setCanvasIsScaled, setVideoStatus } from '../../state/workspace-slice';
 import { defaultParameters, ProcessingParameters } from '../../types/Parameters';
 import { VideoStatus } from '../../types/Video';
 import { useFormFields } from '../../utils/form-hook';
 import { mergeArrayOfObjects } from '../../utils/objects';
 import { StatusWatcher } from '../../utils/StatusWatcher';
 import { FilterParameters, Parameter } from './FilterParameters';
+import { drawObjectInCanvas, ParticleObject } from '../../utils/Canvas';
+import { drawCurrentFrame } from '../../utils/Canvas/drawCurrentFrameInCanvas';
+
 
 export interface EvaluatorProps {
   videoId: string, // Html video element id 
@@ -18,10 +20,6 @@ export interface EvaluatorProps {
   watchStatusCallBack: () => void,
 }
 
-export interface ParticleObject {
-  circle: [[number, number], number],
-  area: number
-}
 
 const thresholdParameters: Parameter[] = [
   { id: 'thresh', name: 'Umbral', type: 'number', defaultValue: '20' }
@@ -44,7 +42,8 @@ export const Evaluator = ({
   const dispatch = useAppDispatch();
 
   // Internal state
-  const [scaled, setScaled] = useState<boolean>(false);
+  const scaled = useAppSelector(state => state.workspace.canvasIsScaled);
+
   const statusWatcher = statusWatcherRef.current;
   const canvasId = 'frameCanvas';
 
@@ -65,18 +64,7 @@ export const Evaluator = ({
 
   // Handlers
   const selectFrame = () => {
-
-    const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
-    const video = document.getElementById(videoId) as HTMLVideoElement;
-
-    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-
-    if (!scaled) {
-      ctx.scale(0.33073, 0.33056)
-      setScaled(true);
-    }
-
-    ctx.drawImage(video, 0, 0);
+    drawCurrentFrame();
   }
 
 
@@ -94,7 +82,7 @@ export const Evaluator = ({
     deepViewApi.processFrame(videoName, frameIndex, params)
       .then((objects: ParticleObject[]) => {
         for (const object of objects)
-          drawObject(ctx, object)
+          drawObjectInCanvas(object)
       })
   }
 
@@ -117,18 +105,6 @@ export const Evaluator = ({
     return parameters;
   }
 
-  const drawObject = (ctx: CanvasRenderingContext2D, object: ParticleObject) => {
-    ctx.beginPath()
-    const { circle } = object;
-    const [center, radius] = circle;
-
-    ctx.arc(center[0], center[1], radius * 2, 0, 2 * Math.PI, false)
-
-
-    ctx.lineWidth = 5
-    ctx.strokeStyle = '#00ff00';
-    ctx.stroke()
-  }
 
   const saveParameters = () => {
     const parameters = getProcessingParameters();

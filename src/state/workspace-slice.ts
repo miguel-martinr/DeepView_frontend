@@ -9,11 +9,13 @@ export interface VideoCollection {
   [id: string]: Video
 }
 export interface WorkspaceState {  
-  videos: VideoCollection
+  videos: VideoCollection,
+  canvasIsScaled: boolean,
 }
 
 const initialState: WorkspaceState = {  
   videos: {},
+  canvasIsScaled: false,
 };
 
 const workspaceSlice = createSlice({
@@ -72,6 +74,10 @@ const workspaceSlice = createSlice({
       if (!state.videos[videoName]) return;
 
       state.videos[videoName].spentSeconds = spentSeconds;
+    },
+
+    setCanvasIsScaled(state, action: PayloAdAction<boolean>) {
+      state.canvasIsScaled = action.payload;
     }
   }
 });
@@ -83,7 +89,8 @@ export const {
   setEventsData,  
   setVideos,
   setVideoStatus,
-  setVideoSpentSeconds
+  setVideoSpentSeconds,
+  setCanvasIsScaled
 
 } = workspaceSlice.actions;
 
