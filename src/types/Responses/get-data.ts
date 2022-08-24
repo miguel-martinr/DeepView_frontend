@@ -24,7 +24,7 @@ export interface EventsData {
 
 export interface VideoDataResponse extends DeepViewAPIResponse {
   data: {
-    particles: ParticlesData,
-    events: EventsData,
+    particles_data: ParticlesData,
+    events_data: EventsData,
   }
 }

@@ -76,10 +76,10 @@ export const VideoPage = () => {
     // Fetch data from API
     deepViewApi.fetchVideoDataResults(video.name, unitToFetch)
       .then((data) => {
-        setParticlesData(data.particles.by_time_unit, unitToFetch);
+        setParticlesData(data.particles_data.by_time_unit, unitToFetch);
         dispatch(setEventsData({
           videoName: video.name,
-          events: data.events.events,
+          events: data.events_data.events,
         }));
 
       })
