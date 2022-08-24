@@ -1,3 +1,5 @@
+import { DeepViewEvent } from "./Responses/get-data";
+
 export interface Particle {
   x: number,
   y: number,
@@ -25,12 +27,12 @@ export interface ParticlesData {
 }
 
 export interface EventsData {
-  secondsWithEvents: number[],
+  events: DeepViewEvent[],
 }
 
 export interface VideoData {
   particles: ParticlesData,
-  events: EventsData,
+  eventsData: EventsData,
 }
 
 export interface Video {
@@ -50,7 +52,7 @@ export const defaultVideoData: VideoData = {
     byTimeUnit: {seconds: [], minutes: [], hours: []},
 
   },
-  events: {
-    secondsWithEvents: [],
+  eventsData: {
+    events: [],
   },
 }

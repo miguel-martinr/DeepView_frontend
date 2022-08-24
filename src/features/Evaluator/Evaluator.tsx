@@ -88,7 +88,7 @@ export const Evaluator = ({
 
     const fps = 30;
     let frameIndex = Math.round(video.currentTime * fps);
-    frameIndex -= (frameIndex > 0 ? 1 : 0);
+    // frameIndex -= (frameIndex > 0 ? 1 : 0);
 
     const params = getProcessingParameters();
     deepViewApi.processFrame(videoName, frameIndex, params)

@@ -4,22 +4,22 @@ import { EventsData } from '../../types/Video'
 import { EventsTable } from './EventsTable'
 
 export interface EventCardProps {
-  events: EventsData
+  eventsData: EventsData
 }
 
 
-export const EventsCard = ({ events }: EventCardProps) => {
+export const EventsCard = ({ eventsData }: EventCardProps) => {
 
   const cardStyle = {
     overflowY: 'scroll' as 'scroll',
-    height: '35%' as '35%',
+    height: '20rem' as '20rem',
   }
 
   return (
     <Card style={cardStyle}>
       <Card.Body>
         <Card.Title>Eventos</Card.Title>
-        <EventsTable events={events} />
+        <EventsTable events={eventsData.events} />
       </Card.Body>
     </Card>
   )

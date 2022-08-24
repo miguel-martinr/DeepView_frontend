@@ -9,8 +9,16 @@ export interface ParticlesData {
   unit: VideoDataTimeUnit,
 }
 
-export interface EventsData {
-  seconds_with_events: number[],
+
+export interface DeepViewEvent {
+  frame_index: number,
+  x: number,
+  y: number,
+  radius: number,
+  area: number,
+}
+export interface EventsData {  
+  events: DeepViewEvent[],
 }
 
 

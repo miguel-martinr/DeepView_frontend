@@ -7,7 +7,7 @@ import { BarChart } from '../features/Charts/BarChart';
 import { StatusButton } from '../features/StatusButton/StatusButton';
 import { VideoInfoCard } from '../features/VideoInfo/VideoInfoCard';
 import { VideoPlayer } from '../features/VideoPlayer/VideoPlayer';
-import { setParticlesDataByTimeUnit, setVideoSpentSeconds, setVideoStatus } from '../state/workspace-slice';
+import { setEventsData, setParticlesDataByTimeUnit, setVideoSpentSeconds, setVideoStatus } from '../state/workspace-slice';
 import { StatusWatcher } from '../utils/StatusWatcher';
 import { VideoDataTimeUnit, VideoStatus } from '../types/Video';
 import { groupArr } from '../utils/math';
@@ -76,7 +76,12 @@ export const VideoPage = () => {
     // Fetch data from API
     deepViewApi.fetchVideoDataResults(video.name, unitToFetch)
       .then((data) => {
-        setParticlesData(data.particles.by_time_unit, unitToFetch)
+        setParticlesData(data.particles.by_time_unit, unitToFetch);
+        dispatch(setEventsData({
+          videoName: video.name,
+          events: data.events.events,
+        }));
+
       })
       .catch(err => {
 
@@ -106,6 +111,8 @@ export const VideoPage = () => {
       particlesByTimeUnit: calculatedData
     }))
   }
+
+  
 
   const watchStatus = () => {
     // Listen for processing completion
@@ -187,7 +194,7 @@ export const VideoPage = () => {
             {/* Events table */}
             <Row className="mt-2">
               <Col>
-                <EventsCard events={{ secondsWithEvents: [2, 63,2, 63,2, 63,2, 63,2, 63,2, 63,2, 63,2, 63,2, 63,2, 63,2, 63,] }} />
+                <EventsCard eventsData={video.data.eventsData} />
               </Col>
             </Row>
           </Col>

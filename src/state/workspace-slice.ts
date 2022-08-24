@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { SetEventsDataAction } from "../types/State/SetEventsDataAction";
 import { SetParticlesByTimeUnitAction } from "../types/State/SetParticlesDataAction";
 import { Video, VideoData, VideoStatus } from "../types/Video";
 
@@ -7,13 +8,11 @@ import { Video, VideoData, VideoStatus } from "../types/Video";
 export interface VideoCollection {
   [id: string]: Video
 }
-export interface WorkspaceState {
-  video: Video | null,
+export interface WorkspaceState {  
   videos: VideoCollection
 }
 
-const initialState: WorkspaceState = {
-  video: null,
+const initialState: WorkspaceState = {  
   videos: {},
 };
 
@@ -21,9 +20,6 @@ const workspaceSlice = createSlice({
   name: "workspace",
   initialState,
   reducers: {
-    setCurrentVideo: (state, action: PayloadAction<Video>) => {
-      state.video = action.payload;
-    },
 
     setVideo(state, action: PayloadAction<Video>) {
       const video = action.payload;      
@@ -53,6 +49,13 @@ const workspaceSlice = createSlice({
       const currentData = state.videos[videoName].data.particles.byTimeUnit;
       state.videos[videoName].data.particles.byTimeUnit = {...currentData, ...particlesByTimeUnit};
     },
+
+    setEventsData(state, action: PayloadAction<SetEventsDataAction>) {
+      const { videoName, events } = action.payload;
+      if (!state.videos[videoName]) return;
+            
+      state.videos[videoName].data.eventsData.events = events;
+    },
     
 
     setVideoStatus(state, action: PayloadAction<{videoName: string, status: VideoStatus}>) {
@@ -73,11 +76,11 @@ const workspaceSlice = createSlice({
   }
 });
 
-export const {
-  setCurrentVideo,
+export const {  
   setVideo,
   setVideoData, 
-  setParticlesDataByTimeUnit,   
+  setParticlesDataByTimeUnit, 
+  setEventsData,  
   setVideos,
   setVideoStatus,
   setVideoSpentSeconds

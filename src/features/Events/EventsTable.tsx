@@ -1,15 +1,14 @@
 import React from 'react'
 import { Button, FormCheck, Table } from 'react-bootstrap'
+import { DeepViewEvent } from '../../types/Responses/get-data'
 import { EventsData } from '../../types/Video'
 import { getFormattedTime } from '../../utils/time'
 
 export interface EventsTableProps {
-  events: EventsData
+  events: DeepViewEvent[]
 }
 
 export const EventsTable = ({ events }: EventsTableProps) => {
-
-  const { secondsWithEvents } = events;
 
 
   return (
@@ -26,11 +25,11 @@ export const EventsTable = ({ events }: EventsTableProps) => {
 
           {
 
-            secondsWithEvents.map((second, i) => {
+            events.map((e, i) => {
               return (
                 <tr key={'second-' + i}>
                   <td>{i}</td>
-                  <td>{getFormattedTime(second)}</td>
+                  <td>{getFormattedTime((1 / 30) * e.frame_index)}</td>
                   <td><Button>Ver</Button></td>
                   <td>
                     <FormCheck type="checkbox" />
