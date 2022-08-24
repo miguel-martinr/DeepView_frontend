@@ -73,10 +73,8 @@ export const Evaluator = ({
     
     const fps = 30;
     const video = getVideo();
-    let frameIndex = Math.round(video.currentTime  * fps) - 1;
-    
-
-    const params = getProcessingParameters();
+    const frameIndex = Math.round(video.currentTime  * fps) - 1;
+    const params = getLocalProcessingParameters();
     
     deepViewApi.processFrame(videoName, frameIndex, params)
       .then((objects: ParticleObject[]) => {
@@ -85,7 +83,7 @@ export const Evaluator = ({
       })
   }
 
-  const getProcessingParameters = (): ProcessingParameters => {
+  const getLocalProcessingParameters = (): ProcessingParameters => {
     const parameters: ProcessingParameters = {
       preprocess: {
         top_hat: {
@@ -106,7 +104,7 @@ export const Evaluator = ({
 
 
   const saveParameters = () => {
-    const parameters = getProcessingParameters();
+    const parameters = getLocalProcessingParameters();
     deepViewApi.saveParameters(videoName, parameters)
       .then((res) => {
         console.log(res.message);

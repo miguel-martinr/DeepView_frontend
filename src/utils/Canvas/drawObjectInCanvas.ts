@@ -24,7 +24,7 @@ export const drawObjectInCanvas = (object: ParticleObject,
   try {
     const ctx = getCanvasContext(canvasId);
 
-    ctx.beginPath()
+    ctx.beginPath(); 
     const { circle } = object;
     const [center, radius] = circle;
   
