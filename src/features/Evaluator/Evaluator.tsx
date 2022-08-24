@@ -11,6 +11,7 @@ import { StatusWatcher } from '../../utils/StatusWatcher';
 import { FilterParameters, Parameter } from './FilterParameters';
 import { drawObjectInCanvas, ParticleObject } from '../../utils/Canvas';
 import { drawCurrentFrame } from '../../utils/Canvas/drawCurrentFrameInCanvas';
+import { getVideo } from '../../utils/Video';
 
 
 export interface EvaluatorProps {
@@ -69,16 +70,14 @@ export const Evaluator = ({
 
 
   const processFrame = () => {
-    const video = document.getElementById(videoId) as HTMLVideoElement;
-
-    const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
-    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-
+    
     const fps = 30;
+    const video = getVideo();
     let frameIndex = Math.round(video.currentTime * fps);
-    // frameIndex -= (frameIndex > 0 ? 1 : 0);
+    
 
     const params = getProcessingParameters();
+    
     deepViewApi.processFrame(videoName, frameIndex, params)
       .then((objects: ParticleObject[]) => {
         for (const object of objects)

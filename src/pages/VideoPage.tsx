@@ -248,9 +248,6 @@ export const VideoPage = () => {
                       </ButtonGroup>
                     </Col>
                   </Row>
-                  <Row className='mt-3 ms-1'>
-                    <Col><h2>Eventos</h2></Col>
-                  </Row>
                 </>
                 :
                 <Evaluator
