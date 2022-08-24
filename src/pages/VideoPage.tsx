@@ -7,7 +7,7 @@ import { BarChart } from '../features/Charts/BarChart';
 import { StatusButton } from '../features/StatusButton/StatusButton';
 import { VideoInfoCard } from '../features/VideoInfo/VideoInfoCard';
 import { VideoPlayer } from '../features/VideoPlayer/VideoPlayer';
-import { setEventsData, setParticlesDataByTimeUnit, setVideoSpentSeconds, setVideoStatus } from '../state/workspace-slice';
+import { setCanvasIsScaled, setEventsData, setParticlesDataByTimeUnit, setVideoSpentSeconds, setVideoStatus } from '../state/workspace-slice';
 import { StatusWatcher } from '../utils/StatusWatcher';
 import { VideoDataTimeUnit, VideoStatus } from '../types/Video';
 import { groupArr } from '../utils/math';
@@ -148,8 +148,10 @@ export const VideoPage = () => {
   }
 
   const toggleMode = () => {
-    if (mode === 'analysis')
+    if (mode === 'analysis') {
+      dispatch(setCanvasIsScaled(false));
       return setMode('evaluation')
+    }
     return setMode('analysis')
   }
 
