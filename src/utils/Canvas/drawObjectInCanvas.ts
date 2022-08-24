@@ -1,5 +1,4 @@
 import { ParticleObject } from './types';
-import { getCanvas } from './getCanvas';
 import { defaultCanvasId } from './defaults';
 import { getCanvasContext } from './getCanvasContext';
 

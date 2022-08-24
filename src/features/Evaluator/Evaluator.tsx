@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Button, Col, Row } from 'react-bootstrap'
 import { deepViewApi } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { setCanvasIsScaled, setVideoStatus } from '../../state/workspace-slice';
+import { setVideoStatus } from '../../state/workspace-slice';
 import { defaultParameters, ProcessingParameters } from '../../types/Parameters';
 import { VideoStatus } from '../../types/Video';
 import { useFormFields } from '../../utils/form-hook';
