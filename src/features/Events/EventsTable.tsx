@@ -1,5 +1,7 @@
 import React from 'react'
 import { Button, FormCheck, Table } from 'react-bootstrap'
+import { useAppDispatch, useAppSelector } from '../../app/hooks'
+import { setMode } from '../../state/workspace-slice'
 import { DeepViewEvent } from '../../types/Responses/get-data'
 import { seekEvent } from '../../utils/Canvas'
 import { getFormattedTime } from '../../utils/time'
@@ -9,6 +11,15 @@ export interface EventsTableProps {
 }
 
 export const EventsTable = ({ events }: EventsTableProps) => {
+  const mode = useAppSelector(({ workspace }) => workspace.mode);
+  const dispatch = useAppDispatch();
+
+  const goToEvent = (event: DeepViewEvent) => {
+    if (mode !== 'evaluation') {
+      dispatch(setMode('evaluation'));    
+    }  
+    seekEvent(event);
+  }
 
   return (
     <div>
@@ -29,7 +40,7 @@ export const EventsTable = ({ events }: EventsTableProps) => {
                 <tr key={'second-' + i}>
                   <td>{i}</td>
                   <td>{getFormattedTime((1 / 30) * e.frame_index)}</td>
-                  <td><Button onClick={() => seekEvent(e)}>Ver</Button></td>
+                  <td><Button onClick={() => goToEvent(e)}>Ver</Button></td>
                   <td>
                     <FormCheck type="checkbox" />
                   </td>

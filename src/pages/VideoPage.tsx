@@ -7,7 +7,7 @@ import { BarChart } from '../features/Charts/BarChart';
 import { StatusButton } from '../features/StatusButton/StatusButton';
 import { VideoInfoCard } from '../features/VideoInfo/VideoInfoCard';
 import { VideoPlayer } from '../features/VideoPlayer/VideoPlayer';
-import { setCanvasIsScaled, setEventsData, setParticlesDataByTimeUnit, setVideoSpentSeconds, setVideoStatus } from '../state/workspace-slice';
+import { setCanvasIsScaled, setEventsData, setMode, setParticlesDataByTimeUnit, setVideoSpentSeconds, setVideoStatus } from '../state/workspace-slice';
 import { StatusWatcher } from '../utils/StatusWatcher';
 import { VideoDataTimeUnit, VideoStatus } from '../types/Video';
 import { groupArr } from '../utils/math';
@@ -16,7 +16,7 @@ import { EventsTable } from '../features/Events/EventsTable';
 import { EventsCard } from '../features/Events/EventsCard';
 
 
-type VideoPageMode = 'evaluation' | 'analysis';
+  type VideoPageMode = 'evaluation' | 'analysis';
 
 export const VideoPage = () => {
 
@@ -35,7 +35,7 @@ export const VideoPage = () => {
   const video = useAppSelector(({ workspace }) => workspace.videos[name]);
   const [fetchingData, setFetchingData] = useState(false);
   const [unit, setUnit] = useState<VideoDataTimeUnit>('hours');
-  const [mode, setMode] = useState<VideoPageMode>('analysis');
+  const mode = useAppSelector(({ workspace }) => workspace.mode);
   const [percentage, setPercentage] = useState<number | undefined>(0);
   const watcherRef = useRef<StatusWatcher>(new StatusWatcher({
     autoClear: false,
@@ -150,9 +150,9 @@ export const VideoPage = () => {
   const toggleMode = () => {
     if (mode === 'analysis') {
       dispatch(setCanvasIsScaled(false));
-      return setMode('evaluation')
+      return dispatch(setMode('evaluation'));
     }
-    return setMode('analysis')
+    return dispatch(setMode('analysis'));
   }
 
   return (

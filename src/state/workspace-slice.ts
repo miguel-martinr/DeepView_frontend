@@ -4,18 +4,20 @@ import { SetParticlesByTimeUnitAction } from "../types/State/SetParticlesDataAct
 import { Video, VideoData, VideoStatus } from "../types/Video";
 
 
-
+export type VideoPageMode = 'evaluation' | 'analysis';
 export interface VideoCollection {
   [id: string]: Video
 }
 export interface WorkspaceState {  
   videos: VideoCollection,
   canvasIsScaled: boolean,
+  mode: VideoPageMode, 
 }
 
 const initialState: WorkspaceState = {  
   videos: {},
   canvasIsScaled: false,
+  mode: 'analysis',
 };
 
 const workspaceSlice = createSlice({
@@ -76,14 +78,22 @@ const workspaceSlice = createSlice({
       state.videos[videoName].spentSeconds = spentSeconds;
     },
 
-    setCanvasIsScaled(state, action: PayloAdAction<boolean>) {
+    setCanvasIsScaled(state, action: PayloadAction<boolean>) {
       state.canvasIsScaled = action.payload;
+    },
+
+    setMode(state, action: PayloadAction<VideoPageMode>) {
+      const newMode = action.payload;
+      if (newMode === 'evaluation') state.canvasIsScaled = false;
+      
+      state.mode = newMode;
     }
   }
 });
 
 export const {  
   setVideo,
+  setMode,
   setVideoData, 
   setParticlesDataByTimeUnit, 
   setEventsData,  
