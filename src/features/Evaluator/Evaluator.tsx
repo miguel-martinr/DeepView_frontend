@@ -73,7 +73,7 @@ export const Evaluator = ({
     
     const fps = 30;
     const video = getVideo();
-    let frameIndex = Math.round(video.currentTime * fps);
+    let frameIndex = Math.round(video.currentTime  * fps) - 1;
     
 
     const params = getProcessingParameters();

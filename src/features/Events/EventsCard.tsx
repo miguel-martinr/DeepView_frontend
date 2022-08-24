@@ -18,7 +18,7 @@ export const EventsCard = ({ eventsData }: EventCardProps) => {
   return (
     <Card style={cardStyle}>
       <Card.Body>
-        <Card.Title>Eventos</Card.Title>
+        <Card.Title>Eventos detectados: {eventsData.events.length}</Card.Title>
         <EventsTable events={eventsData.events} />
       </Card.Body>
     </Card>
