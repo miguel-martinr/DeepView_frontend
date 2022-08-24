@@ -10,6 +10,19 @@ export interface EventsTableProps {
 
 export const EventsTable = ({ events }: EventsTableProps) => {
 
+  // Go to instant event
+  const goToFrameEvent = (frameIndex: number) => {
+    const video = document.getElementById('videoInput') as HTMLVideoElement;
+    
+    if (!video) {
+      console.warn('No video element found');
+      return;
+    }
+    
+    const approxInstant = frameIndex / 30;
+    video.currentTime = approxInstant;
+  }
+
 
   return (
     <div>
@@ -30,7 +43,7 @@ export const EventsTable = ({ events }: EventsTableProps) => {
                 <tr key={'second-' + i}>
                   <td>{i}</td>
                   <td>{getFormattedTime((1 / 30) * e.frame_index)}</td>
-                  <td><Button>Ver</Button></td>
+                  <td><Button onClick={() => goToFrameEvent(e.frame_index)}>Ver</Button></td>
                   <td>
                     <FormCheck type="checkbox" />
                   </td>
