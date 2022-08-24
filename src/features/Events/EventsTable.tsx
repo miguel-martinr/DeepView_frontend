@@ -27,10 +27,9 @@ export const EventsTable = ({ events }: EventsTableProps) => {
       <Table>
         <thead>
           <tr>
-            <th>#</th>
-            <th>Instante</th>
-            <th>Ir</th>
-            <th>Acciones</th>
+            <th className='text-center'>#</th>
+            <th className='text-center'>Instante</th>
+            <th className='text-center'>Ir</th>            
           </tr>
 
           {
@@ -38,12 +37,9 @@ export const EventsTable = ({ events }: EventsTableProps) => {
             events.map((e, i) => {
               return (
                 <tr key={'second-' + i}>
-                  <td>{i}</td>
-                  <td>{getFormattedTime((1 / 30) * e.frame_index)}</td>
-                  <td><Button onClick={() => goToEvent(e)}>Ver</Button></td>
-                  <td>
-                    <FormCheck type="checkbox" />
-                  </td>
+                  <td className='text-center'>{i}</td>
+                  <td className='text-center'>{getFormattedTime((1 / 30) * e.frame_index)}</td>
+                  <td className='text-center'><Button onClick={() => goToEvent(e)}>Ver</Button></td>                  
                 </tr>
               )
             })
