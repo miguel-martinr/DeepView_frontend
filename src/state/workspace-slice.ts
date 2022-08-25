@@ -1,27 +1,29 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { SetEventsDataAction } from "../types/State/SetEventsDataAction";
+import { SetParticlesByTimeUnitAction } from "../types/State/SetParticlesDataAction";
 import { Video, VideoData, VideoStatus } from "../types/Video";
 
 
+export type VideoPageMode = 'evaluation' | 'analysis';
 export interface VideoCollection {
   [id: string]: Video
 }
-export interface WorkspaceState {
-  video: Video | null,
-  videos: VideoCollection
+export interface WorkspaceState {  
+  videos: VideoCollection,
+  canvasIsScaled: boolean,
+  mode: VideoPageMode, 
 }
 
-const initialState: WorkspaceState = {
-  video: null,
+const initialState: WorkspaceState = {  
   videos: {},
+  canvasIsScaled: false,
+  mode: 'analysis',
 };
 
 const workspaceSlice = createSlice({
   name: "workspace",
   initialState,
   reducers: {
-    setCurrentVideo: (state, action: PayloadAction<Video>) => {
-      state.video = action.payload;
-    },
 
     setVideo(state, action: PayloadAction<Video>) {
       const video = action.payload;      
@@ -42,6 +44,23 @@ const workspaceSlice = createSlice({
       const currentData = state.videos[videoName].data;
       state.videos[videoName].data = {...currentData, ...data};
     },
+    
+
+    setParticlesDataByTimeUnit(state, action: PayloadAction<SetParticlesByTimeUnitAction>) {
+      const { videoName, particlesByTimeUnit } = action.payload;
+      if (!state.videos[videoName]) return;
+      
+      const currentData = state.videos[videoName].data.particles.byTimeUnit;
+      state.videos[videoName].data.particles.byTimeUnit = {...currentData, ...particlesByTimeUnit};
+    },
+
+    setEventsData(state, action: PayloadAction<SetEventsDataAction>) {
+      const { videoName, events } = action.payload;
+      if (!state.videos[videoName]) return;
+            
+      state.videos[videoName].data.eventsData.events = events;
+    },
+    
 
     setVideoStatus(state, action: PayloadAction<{videoName: string, status: VideoStatus}>) {
       
@@ -57,17 +76,31 @@ const workspaceSlice = createSlice({
       if (!state.videos[videoName]) return;
 
       state.videos[videoName].spentSeconds = spentSeconds;
+    },
+
+    setCanvasIsScaled(state, action: PayloadAction<boolean>) {
+      state.canvasIsScaled = action.payload;
+    },
+
+    setMode(state, action: PayloadAction<VideoPageMode>) {
+      const newMode = action.payload;
+      if (newMode === 'evaluation') state.canvasIsScaled = false;
+      
+      state.mode = newMode;
     }
   }
 });
 
-export const {
-  setCurrentVideo,
+export const {  
   setVideo,
-  setVideoData,
+  setMode,
+  setVideoData, 
+  setParticlesDataByTimeUnit, 
+  setEventsData,  
   setVideos,
   setVideoStatus,
-  setVideoSpentSeconds
+  setVideoSpentSeconds,
+  setCanvasIsScaled
 
 } = workspaceSlice.actions;
 

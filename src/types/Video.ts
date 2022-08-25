@@ -1,3 +1,5 @@
+import { DeepViewEvent } from "./Responses/get-data";
+
 export interface Particle {
   x: number,
   y: number,
@@ -14,14 +16,25 @@ export interface Frame {
 // }
 
 export type VideoStatus = 'processing' | 'processed' | 'stopped' | 'unprocessed';
-export type VideoDataUnit = 'seconds' | 'minutes' | 'hours';
+export type VideoDataTimeUnit = 'seconds' | 'minutes' | 'hours';
 
-// export type VideoData = {unit: VideoDataUnit, values: number[]};
-export type VideoData = {
-  seconds: number[],
-  minutes: number[],
-  hours: number[],
+
+export type ParticlesByTimeUnit = {
+  [key in VideoDataTimeUnit]: number[]
 }
+export interface ParticlesData {
+  byTimeUnit: ParticlesByTimeUnit,
+}
+
+export interface EventsData {
+  events: DeepViewEvent[],
+}
+
+export interface VideoData {
+  particles: ParticlesData,
+  eventsData: EventsData,
+}
+
 export interface Video {
   name: string,
   size_in_MB: number,
@@ -31,4 +44,15 @@ export interface Video {
   status: VideoStatus,
   data: VideoData,
   spentSeconds?: number,
+}
+
+
+export const defaultVideoData: VideoData = {
+  particles: {
+    byTimeUnit: {seconds: [], minutes: [], hours: []},
+
+  },
+  eventsData: {
+    events: [],
+  },
 }

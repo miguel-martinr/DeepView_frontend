@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
 import { ProcessingParameters } from '../types/Parameters';
+import { VideoDataResponse } from '../types/Responses/get-data';
 
 
 function authenticate(config: AxiosRequestConfig<any>) {
@@ -92,20 +93,19 @@ export class DeepViewApi {
     }
   }
 
-  async fetchParticlesAverageQuantity(video_name: string, unit = 'seconds') {
-    const response = await this.http.get('/video', {
+  async fetchVideoDataResults(video_name: string, unit = 'seconds') {
+    const {data: response}: {data: VideoDataResponse} = await this.http.get('/video', {
       params: {
         action: 'get-data',
-        video_name,
-        type: 'ParticlesAverage',
+        video_name,        
         unit,
       }
     });
 
-    if (response.data.success) {
-      return response.data.data;
+    if (response.success) {
+      return response.data;
     } else {
-      throw new Error(response.data.message);
+      throw new Error(response.message);
     }
 
   }

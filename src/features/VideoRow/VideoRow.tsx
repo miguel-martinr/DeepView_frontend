@@ -3,7 +3,7 @@ import { Button, Col, Row } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import { deepViewApi } from '../../api/api'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
-import { setCurrentVideo, setVideo, setVideoSpentSeconds } from '../../state/workspace-slice'
+import { setVideo, setVideoSpentSeconds } from '../../state/workspace-slice'
 import { VideoStatus } from '../../types/Video'
 import { StatusWatcher } from '../../utils/StatusWatcher'
 import { StatusButton } from '../StatusButton/StatusButton'
@@ -68,7 +68,7 @@ export const VideoRow = ({ name }: VideoRowProps) => {
   }
 
   const navigateToVideo = () => {
-    dispatch(setCurrentVideo(video));
+    // dispatch(setCurrentVideo(video));
     navigate(`/video/${video.name}`);
   }
 
