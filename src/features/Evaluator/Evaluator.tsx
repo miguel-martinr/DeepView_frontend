@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Col, Row } from 'react-bootstrap'
+import { Button, Col, Row, Spinner } from 'react-bootstrap'
 import { deepViewApi } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { setVideoStatus } from '../../state/workspace-slice';
@@ -43,7 +43,7 @@ export const Evaluator = ({
   const dispatch = useAppDispatch();
 
   // Internal state
-  const scaled = useAppSelector(state => state.workspace.canvasIsScaled);
+  
 
   const statusWatcher = statusWatcherRef.current;
   const canvasId = 'frameCanvas';
@@ -217,6 +217,9 @@ export const Evaluator = ({
           >
             Guardar parámetros
           </Button>
+        </Col>
+        <Col sm={9} className='mt-1'>
+            
         </Col>
       </Row>
     </>
