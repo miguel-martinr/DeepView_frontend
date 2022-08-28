@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Col, Row, Spinner } from 'react-bootstrap'
+import { Button, Col, Fade, Row, Spinner } from 'react-bootstrap'
 import { deepViewApi } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { setVideoStatus } from '../../state/workspace-slice';
@@ -33,17 +33,17 @@ const tophatParameters: Parameter[] = [
   { id: 'kernelHeight', name: 'Alto del kernel', type: 'number', defaultValue: defaultHeight }
 ]
 
-export const Evaluator = ({ 
-  videoId, 
-  videoName, 
-  statusWatcherRef, 
+export const Evaluator = ({
+  videoId,
+  videoName,
+  statusWatcherRef,
   watchStatusCallBack: wacthStatus }: EvaluatorProps) => {
 
   // Useful hooks
   const dispatch = useAppDispatch();
 
   // Internal state
-  
+  const [savingParameters, setSavingParameters] = useState<any>(false);
 
   const statusWatcher = statusWatcherRef.current;
   const canvasId = 'frameCanvas';
@@ -70,12 +70,12 @@ export const Evaluator = ({
 
 
   const processFrame = () => {
-    
+
     const fps = 30;
     const video = getVideo();
-    const frameIndex = Math.round(video.currentTime  * fps) - 1;
+    const frameIndex = Math.round(video.currentTime * fps) - 1;
     const params = getLocalProcessingParameters();
-    
+
     deepViewApi.processFrame(videoName, frameIndex, params)
       .then((objects: ParticleObject[]) => {
         for (const object of objects)
@@ -104,12 +104,23 @@ export const Evaluator = ({
 
 
   const saveParameters = () => {
+    setSavingParameters(<Spinner animation="border" variant="primary" />);
     const parameters = getLocalProcessingParameters();
-    deepViewApi.saveParameters(videoName, parameters)
+    setTimeout(() => {
+      deepViewApi.saveParameters(videoName, parameters)
       .then((res) => {
-        console.log(res.message);
-      })
-      .catch(err => alert(`Error guardando los parámetros :(  : ${err.message}`));
+          setSavingParameters(<span className='text-success'>Guardado correctamente!</span>)
+          setTimeout(() => setSavingParameters(false), 1000);
+          console.log(res.message);
+        })
+        .catch(err => {
+          const errorMessage = err.message || 'Desconocido';
+          setSavingParameters(<span className='text-danger'>Error al guardar los parámetros: {errorMessage}</span>)
+        })
+        .finally(() => {
+        });
+    }, 1000);
+
   }
 
 
@@ -219,7 +230,11 @@ export const Evaluator = ({
           </Button>
         </Col>
         <Col sm={9} className='mt-1'>
-            
+          <Fade in={savingParameters}>
+            <div className='mt-1'>
+              {savingParameters ? savingParameters : <></>}
+            </div>
+          </Fade>
         </Col>
       </Row>
     </>
