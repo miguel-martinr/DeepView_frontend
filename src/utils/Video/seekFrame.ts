@@ -1,9 +1,9 @@
 import { getVideo } from "./getVideo";
 
-export const seekFrame = (frameIndex: number) => {
+export const seekFrame = (frameIndex: number, frameRate: number) => {
   try {
     const video = getVideo();
-    const approxInstant = frameIndex / 30;
+    const approxInstant = frameIndex / frameRate;
     
     video.currentTime = approxInstant;
 
