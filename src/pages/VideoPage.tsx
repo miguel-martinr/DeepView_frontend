@@ -52,7 +52,7 @@ export const VideoPage = () => {
 
   const videoId = "videoInput";
 
-  const label = unit === 'seconds' ? 'Moda de partículas cada 30 frames' :
+  const label = unit === 'seconds' ? `Moda de partículas cada ${video.fps} frames` :
     `Partículas por ${unit === 'minutes' ? 'minuto' : 'hora'}`;
 
 
@@ -196,7 +196,7 @@ export const VideoPage = () => {
             {/* Events table */}
             <Row className="mt-2">
               <Col>
-                <EventsCard eventsData={video.data.eventsData} />
+                <EventsCard video={video} />
               </Col>
             </Row>
           </Col>

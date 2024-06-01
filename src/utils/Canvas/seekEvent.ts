@@ -4,7 +4,7 @@ import { seekFrame } from "../Video/seekFrame";
 import { drawCurrentFrame } from "./drawCurrentFrameInCanvas";
 import { drawObjectInCanvas } from "./drawObjectInCanvas";
 
-  export const seekEvent = (event: DeepViewEvent) => {
+  export const seekEvent = (event: DeepViewEvent, videoFps: number) => {
     const video = getVideo();
     video.requestVideoFrameCallback(() => {
       drawCurrentFrame();
@@ -14,6 +14,6 @@ import { drawObjectInCanvas } from "./drawObjectInCanvas";
       }, {color: '#ff0000'});
     });
 
-    seekFrame(event.frame_index);  
+    seekFrame(event.frame_index, videoFps);  
     video.currentTime += 0.00001;    
   }

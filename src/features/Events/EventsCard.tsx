@@ -1,15 +1,18 @@
 import React from 'react'
 import { Card } from 'react-bootstrap'
-import { EventsData } from '../../types/Video'
+import { Video } from '../../types/Video'
 import { EventsTable } from './EventsTable'
 
 export interface EventCardProps {
-  eventsData: EventsData
+  video: Video
 }
 
 
-export const EventsCard = ({ eventsData }: EventCardProps) => {
-
+export const EventsCard = ({ video }: EventCardProps) => {
+  const {
+    data: { eventsData },
+  } = video;
+  
   const cardStyle = {
     overflowY: 'scroll' as 'scroll',
     height: '20rem' as '20rem',
@@ -19,7 +22,7 @@ export const EventsCard = ({ eventsData }: EventCardProps) => {
     <Card style={cardStyle}>
       <Card.Body>
         <Card.Title>Eventos detectados: {eventsData.events.length}</Card.Title>
-        <EventsTable events={eventsData.events} />
+        <EventsTable events={eventsData.events} videoFps={video.fps}/>
       </Card.Body>
     </Card>
   )

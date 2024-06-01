@@ -7,10 +7,11 @@ import { seekEvent } from '../../utils/Canvas'
 import { getFormattedTime } from '../../utils/time'
 
 export interface EventsTableProps {
-  events: DeepViewEvent[]
+  events: DeepViewEvent[],
+  videoFps: number
 }
 
-export const EventsTable = ({ events }: EventsTableProps) => {
+export const EventsTable = ({ events, videoFps }: EventsTableProps) => {
   const mode = useAppSelector(({ workspace }) => workspace.mode);
   const dispatch = useAppDispatch();
 
@@ -18,7 +19,7 @@ export const EventsTable = ({ events }: EventsTableProps) => {
     if (mode !== 'evaluation') {
       dispatch(setMode('evaluation'));    
     }  
-    seekEvent(event);
+    seekEvent(event, videoFps);
   }
 
   return (
@@ -38,7 +39,7 @@ export const EventsTable = ({ events }: EventsTableProps) => {
               return (
                 <tr key={'second-' + i}>
                   <td className='text-center'>{i}</td>
-                  <td className='text-center'>{getFormattedTime((1 / 30) * e.frame_index)}</td>
+                  <td className='text-center'>{getFormattedTime((1 / videoFps) * e.frame_index)}</td>
                   <td className='text-center'><Button onClick={() => goToEvent(e)}>Ver</Button></td>                  
                 </tr>
               )
