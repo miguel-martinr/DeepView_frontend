@@ -17,6 +17,7 @@ import { getVideo } from '../../utils/Video';
 export interface EvaluatorProps {
   videoId: string, // Html video element id 
   videoName: string,
+  videoFps: number,
   statusWatcherRef: React.MutableRefObject<StatusWatcher>,
   watchStatusCallBack: () => void,
 }
@@ -35,7 +36,8 @@ const tophatParameters: Parameter[] = [
 
 export const Evaluator = ({ 
   videoId, 
-  videoName, 
+  videoName,
+  videoFps, 
   statusWatcherRef, 
   watchStatusCallBack: wacthStatus }: EvaluatorProps) => {
 
@@ -70,10 +72,9 @@ export const Evaluator = ({
 
 
   const processFrame = () => {
-    
-    const fps = 30;
+        
     const video = getVideo();
-    const frameIndex = Math.round(video.currentTime  * fps) - 1;
+    const frameIndex = Math.round(video.currentTime  * videoFps) - 1;
     const params = getLocalProcessingParameters();
     
     deepViewApi.processFrame(videoName, frameIndex, params)
