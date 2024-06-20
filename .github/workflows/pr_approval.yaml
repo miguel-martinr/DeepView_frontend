@@ -9,6 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:      
       - name: Approve PR if made by the owner
-        uses: miguel-martinr/approve-pull-request-owner-action@latest          
+        uses: miguel-martinr/approve-pull-request-owner-action@0.0.4          
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
