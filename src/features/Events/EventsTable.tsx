@@ -22,6 +22,8 @@ export const EventsTable = ({ events, videoFps }: EventsTableProps) => {
     seekEvent(event, videoFps);
   }
 
+  const frameRateIsDefined = videoFps !== undefined;
+
   return (
     <div>
 
@@ -29,8 +31,11 @@ export const EventsTable = ({ events, videoFps }: EventsTableProps) => {
         <thead>
           <tr>
             <th className='text-center'>#</th>
-            <th className='text-center'>Instante</th>
-            <th className='text-center'>Ir</th>            
+            <th className='text-center'>{frameRateIsDefined ? 'Instante' : 'Frame'}</th>
+            {
+              frameRateIsDefined &&
+              <th className='text-center'>Ir</th>            
+            }
           </tr>
 
           {
@@ -39,8 +44,11 @@ export const EventsTable = ({ events, videoFps }: EventsTableProps) => {
               return (
                 <tr key={'second-' + i}>
                   <td className='text-center'>{i}</td>
-                  <td className='text-center'>{getFormattedTime((1 / videoFps) * e.frame_index)}</td>
-                  <td className='text-center'><Button onClick={() => goToEvent(e)}>Ver</Button></td>                  
+                  <td className='text-center'>{frameRateIsDefined ? (getFormattedTime((1 / videoFps) * e.frame_index)) : e.frame_index}</td>
+                  {
+                    frameRateIsDefined &&
+                    <td className='text-center'><Button onClick={() => goToEvent(e)}>Ver</Button></td>
+                  }
                 </tr>
               )
             })
