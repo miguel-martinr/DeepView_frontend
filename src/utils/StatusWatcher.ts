@@ -1,4 +1,3 @@
-import { AxiosResponse } from "axios";
 import { deepViewApi } from "../api/api";
 import { VideoStatus } from "../types/Video";
 
@@ -15,7 +14,7 @@ const defaultConfig: StatusWatcherConfig = {
   seconds: 15,
 }
 export class StatusWatcher extends EventTarget {
-  private interval: NodeJS.Timer | null = null;
+  private interval: ReturnType<typeof setTimeout> | null = null;
   private config: StatusWatcherConfig;
 
   constructor(config: Partial<StatusWatcherConfig> = defaultConfig) {
