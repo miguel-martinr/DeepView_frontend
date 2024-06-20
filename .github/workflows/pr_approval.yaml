@@ -2,13 +2,13 @@ name: Approve PR made by the repo owner
 run-name: ${{ github.actor }} is running the PR approval action
 on:
   pull_request:
-    types: [opened]
+    types: [opened, reopened]
 
 jobs:
   Check-PRs:
     runs-on: ubuntu-latest
-    steps:
+    steps:      
       - name: Approve PR if made by the owner
-        uses: miguel-martinr/approve-pull-request-owner-action@v0.0.2
+        uses: miguel-martinr/approve-pull-request-owner-action@v0.0.3             
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
