@@ -12,7 +12,6 @@ import { StatusWatcher } from '../utils/StatusWatcher';
 import { VideoDataTimeUnit, VideoStatus } from '../types/Video';
 import { groupArr } from '../utils/math';
 import { Evaluator } from '../features/Evaluator/Evaluator';
-import { EventsTable } from '../features/Events/EventsTable';
 import { EventsCard } from '../features/Events/EventsCard';
 
 
