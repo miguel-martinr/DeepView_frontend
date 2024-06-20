@@ -24,18 +24,27 @@ export const VideoInfoCard = (props: VideoInfoCardProps) => {
     <Card className='info-card'>
       <Card.Body>
         <Card.Title>Información</Card.Title>
+        {
+
+        }
         <InputGroup>
           <InputGroup.Text>Nombre</InputGroup.Text>
           <Form.Control type="text" value={video.name} readOnly style={inputStyle} />
         </InputGroup>
-        <InputGroup>
-          <InputGroup.Text>Duración</InputGroup.Text>
-          <Form.Control type="text" value={getFormattedDuration(video.duration_in_seconds)} readOnly style={inputStyle} />
-        </InputGroup>
-        <InputGroup>
-          <InputGroup.Text>Tamaño</InputGroup.Text>
-          <Form.Control type="text" value={Math.round(video.size_in_MB * 100) / 100 + ' MB'} readOnly style={inputStyle} />
-        </InputGroup>
+        {
+          video.duration_in_seconds !== undefined &&
+          <InputGroup>
+            <InputGroup.Text>Duración</InputGroup.Text>
+            <Form.Control type="text" value={getFormattedDuration(video.duration_in_seconds)} readOnly style={inputStyle} />
+          </InputGroup>
+        }
+        {
+          video.size_in_MB !== undefined &&
+          <InputGroup>
+            <InputGroup.Text>Tamaño</InputGroup.Text>
+            <Form.Control type="text" value={Math.round(video.size_in_MB * 100) / 100 + ' MB'} readOnly style={inputStyle} />
+          </InputGroup>
+        }
         {
           video.spentSeconds !== undefined ?
             <InputGroup>

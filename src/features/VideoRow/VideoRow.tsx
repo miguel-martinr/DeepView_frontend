@@ -13,6 +13,24 @@ interface VideoRowProps {
   name: string
 }
 
+
+const ChipWithTooltip = ({ label, tooltip }: { label: string, tooltip: string }) => {
+  return (
+    <div className="badge bg-warning text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title={tooltip}>
+      {label}
+    </div>
+  )
+}
+
+const VideoMissingChip = () => {
+  const tooltip = `
+No se ha encontrado un archivo de vídeo que corresponda con este nombre. 
+Debido a esto, algunas características no están disponibles para los datos de este vídeo.
+  `;
+
+  return <ChipWithTooltip label="Media no disponible | ?" tooltip={tooltip} />
+}
+
 export const VideoRow = ({ name }: VideoRowProps) => {
   // Global state
   const video = useAppSelector(({ workspace }) => workspace.videos[name]);
@@ -31,8 +49,8 @@ export const VideoRow = ({ name }: VideoRowProps) => {
 
     if (video.status === 'processed')
       deepViewApi.checkVideoStatus(video.name)
-        .then(({ spent_seconds: spentSeconds })=> {
-          dispatch(setVideoSpentSeconds({videoName: video.name, spentSeconds}))
+        .then(({ spent_seconds: spentSeconds }) => {
+          dispatch(setVideoSpentSeconds({ videoName: video.name, spentSeconds }))
         });
 
     return () => watcher.clear();
@@ -87,7 +105,13 @@ export const VideoRow = ({ name }: VideoRowProps) => {
           <Col>
             <h5>{video.name}</h5>
           </Col>
-          <Col className='text-end'>
+          {
+            video.video_missing &&
+            <Col className='text-end'>
+              <VideoMissingChip />
+            </Col>
+          }
+          <Col sm={'auto'} className='text-end'>
             <StatusButton status={video.status} />
           </Col>
         </Row>
@@ -95,7 +119,7 @@ export const VideoRow = ({ name }: VideoRowProps) => {
           <Col sm={12}>
             <div className="btn-group" role="group" aria-label="Basic example">
               <Button onClick={() => navigateToVideo()}>Abrir</Button>
-              <Button                
+              <Button
                 variant={video.status === 'processing' ? 'warning' : 'success'}
                 onClick={video.status === 'processing' ? handleStopProcessing : handleProcess}
               >

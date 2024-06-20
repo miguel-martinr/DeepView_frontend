@@ -20,6 +20,7 @@ export interface EvaluatorProps {
   videoFps: number,
   statusWatcherRef: React.MutableRefObject<StatusWatcher>,
   watchStatusCallBack: () => void,
+  videoMissing?: boolean
 }
 
 
@@ -34,18 +35,17 @@ const tophatParameters: Parameter[] = [
   { id: 'kernelHeight', name: 'Alto del kernel', type: 'number', defaultValue: defaultHeight }
 ]
 
-export const Evaluator = ({ 
-  videoId, 
+export const Evaluator = ({
   videoName,
-  videoFps, 
-  statusWatcherRef, 
-  watchStatusCallBack: wacthStatus }: EvaluatorProps) => {
+  videoFps,
+  statusWatcherRef,
+  watchStatusCallBack: wacthStatus,
+  videoMissing }: EvaluatorProps) => {
 
   // Useful hooks
   const dispatch = useAppDispatch();
 
-  // Internal state
-  const scaled = useAppSelector(state => state.workspace.canvasIsScaled);
+  // Internal state  
 
   const statusWatcher = statusWatcherRef.current;
   const canvasId = 'frameCanvas';
@@ -72,11 +72,11 @@ export const Evaluator = ({
 
 
   const processFrame = () => {
-        
+
     const video = getVideo();
-    const frameIndex = Math.round(video.currentTime  * videoFps) - 1;
+    const frameIndex = Math.round(video.currentTime * videoFps) - 1;
     const params = getLocalProcessingParameters();
-    
+
     deepViewApi.processFrame(videoName, frameIndex, params)
       .then((objects: ParticleObject[]) => {
         for (const object of objects)
@@ -146,35 +146,41 @@ export const Evaluator = ({
 
   return (
     <>
-      <Row className='mt-2'>
-        <Col>
-          <canvas width={635} height={357} id={canvasId} />
-        </Col>
-      </Row>
-      {/* Under frame Buttons */}
-      <Row>
-        <Col>
-          <Button
-            onClick={() => selectFrame()}
-            className='me-1'
-          >
-            Seleccionar frame actual
-          </Button>
-          <Button
-            variant='success'
-            onClick={() => processFrame()}
-            className='me-1'
-          >
-            Procesar frame
-          </Button>
-          <Button
-            variant='warning'
-            onClick={() => { handleProcess() }}
-          >
-            Procesar vídeo
-          </Button>
-        </Col>
-      </Row>
+      {
+        !videoMissing &&
+        <>
+          <Row className='mt-2'>
+            <Col>
+              <canvas width={635} height={357} id={canvasId} />
+            </Col>
+          </Row>
+          {/* Under frame Buttons */}
+          <Row>
+            <Col>
+              <Button
+                onClick={() => selectFrame()}
+                className='me-1'
+              >
+                Seleccionar frame actual
+              </Button>
+              <Button
+                variant='success'
+                onClick={() => processFrame()}
+                className='me-1'
+              >
+                Procesar frame
+              </Button>
+              <Button
+                variant='warning'
+                onClick={() => { handleProcess() }}
+              >
+                Procesar vídeo
+              </Button>
+            </Col>
+          </Row>
+        </>
+      }
+      
       {/* Parameters */}
       <Row className='mt-3'>
         <Col>

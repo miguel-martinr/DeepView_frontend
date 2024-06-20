@@ -8,19 +8,22 @@ import { getFormattedTime } from '../../utils/time'
 
 export interface EventsTableProps {
   events: DeepViewEvent[],
-  videoFps: number
+  videoFps: number,
+  videoMissing?: boolean
 }
 
-export const EventsTable = ({ events, videoFps }: EventsTableProps) => {
+export const EventsTable = ({ events, videoFps, videoMissing }: EventsTableProps) => {
   const mode = useAppSelector(({ workspace }) => workspace.mode);
   const dispatch = useAppDispatch();
 
   const goToEvent = (event: DeepViewEvent) => {
     if (mode !== 'evaluation') {
-      dispatch(setMode('evaluation'));    
-    }  
+      dispatch(setMode('evaluation'));
+    }
     seekEvent(event, videoFps);
   }
+
+  const frameRateIsDefined = videoFps !== undefined && videoFps !== null;
 
   return (
     <div>
@@ -29,8 +32,11 @@ export const EventsTable = ({ events, videoFps }: EventsTableProps) => {
         <thead>
           <tr>
             <th className='text-center'>#</th>
-            <th className='text-center'>Instante</th>
-            <th className='text-center'>Ir</th>            
+            <th className='text-center'>{frameRateIsDefined ? 'Instante' : 'Frame'}</th>
+            {
+              !videoMissing &&
+              <th className='text-center'>Ir</th>
+            }
           </tr>
 
           {
@@ -39,8 +45,11 @@ export const EventsTable = ({ events, videoFps }: EventsTableProps) => {
               return (
                 <tr key={'second-' + i}>
                   <td className='text-center'>{i}</td>
-                  <td className='text-center'>{getFormattedTime((1 / videoFps) * e.frame_index)}</td>
-                  <td className='text-center'><Button onClick={() => goToEvent(e)}>Ver</Button></td>                  
+                  <td className='text-center'>{frameRateIsDefined ? (getFormattedTime((1 / videoFps) * e.frame_index)) : e.frame_index}</td>
+                  {
+                    !videoMissing &&
+                    <td className='text-center'><Button onClick={() => goToEvent(e)}>Ver</Button></td>
+                  }
                 </tr>
               )
             })

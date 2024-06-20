@@ -12,7 +12,6 @@ import { StatusWatcher } from '../utils/StatusWatcher';
 import { VideoDataTimeUnit, VideoStatus } from '../types/Video';
 import { groupArr } from '../utils/math';
 import { Evaluator } from '../features/Evaluator/Evaluator';
-import { EventsTable } from '../features/Events/EventsTable';
 import { EventsCard } from '../features/Events/EventsCard';
 
 
@@ -181,15 +180,24 @@ export const VideoPage = () => {
             {/* Video player */}
             <Row>
               <Col>
+              {
+                !video.video_missing ?
                 <VideoPlayer
                   src={deepViewApi.getVideoStaticPath(video.name)}
                   videoId={videoId}
-                />
+                /> :
+                // Gray box with message
+                <div style={{ backgroundColor: '#e8e8e8', height: '10rem', width: '100%' }} 
+                  className='d-flex justify-content-center align-items-center'
+                >
+                  <p className='text-center text-muted'>Archivo de vídeo no disponible</p>
+                </div>
+              }
               </Col>
             </Row>
 
             {/* Video info */}
-            <Row>
+            <Row className="mt-2">
               <Col><VideoInfoCard video={video}></VideoInfoCard></Col>
             </Row>
 
@@ -256,6 +264,7 @@ export const VideoPage = () => {
                   videoFps={video.fps}
                   statusWatcherRef={watcherRef}
                   watchStatusCallBack={watchStatus}
+                  videoMissing={video.video_missing}
                 />
             }
           </Col>

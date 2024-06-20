@@ -11,6 +11,8 @@ export interface EventCardProps {
 export const EventsCard = ({ video }: EventCardProps) => {
   const {
     data: { eventsData },
+    video_missing: videoMissing
+
   } = video;
   
   const cardStyle = {
@@ -22,7 +24,7 @@ export const EventsCard = ({ video }: EventCardProps) => {
     <Card style={cardStyle}>
       <Card.Body>
         <Card.Title>Eventos detectados: {eventsData.events.length}</Card.Title>
-        <EventsTable events={eventsData.events} videoFps={video.fps}/>
+        <EventsTable events={eventsData.events} videoFps={video.fps} videoMissing={videoMissing}/>
       </Card.Body>
     </Card>
   )

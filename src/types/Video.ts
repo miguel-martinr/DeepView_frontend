@@ -44,6 +44,7 @@ export interface Video {
   status: VideoStatus,
   data: VideoData,
   spentSeconds?: number,
+  video_missing?: boolean,
 }
 
 
