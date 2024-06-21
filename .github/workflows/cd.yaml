@@ -17,8 +17,13 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: Deploy to GH Pages
-        # run the deploy script
+      - name: Build the app        
         run: |
           npm install
-          npm run deploy
+          npm run build
+      
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
