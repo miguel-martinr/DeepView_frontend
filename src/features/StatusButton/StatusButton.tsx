@@ -13,8 +13,8 @@ export const StatusButton = ({ status, percentage }: StatusButtonProps) => {
   const StatusType = {
     processing: { message: 'Procesando', color: 'warning', buttonVariant: '' },
     processed: { message: 'Procesado', color: 'success', buttonVariant: 'success' },
-    unprocessed: { message: 'No procesado', color: 'danger', buttonVariant: 'danger' },
-    stopped: {message: 'Detenido', color: 'secondary', buttonVariant: 'secondary'}
+    unprocessed: { message: 'No procesado', color: 'secondary', buttonVariant: 'secondary' },
+    stopped: {message: 'Detenido', color: 'danger', buttonVariant: 'danger'}
   }
 
   return (

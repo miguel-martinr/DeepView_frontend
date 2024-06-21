@@ -20,7 +20,7 @@ jobs:
       - name: Build the app        
         run: |
           npm install
-          npm run build
+          APP_TARGET=online npm run build
       
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4

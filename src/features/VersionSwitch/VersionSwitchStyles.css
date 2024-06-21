@@ -1,0 +1,78 @@
+.version-switch-checkbox {
+  height: 0;
+  width: 0;
+  position: absolute;
+  visibility: hidden;
+}
+
+.version-switch {
+  cursor: pointer;
+  border-radius: 25px;
+  width: 7rem;
+  height: 3rem;
+  background: #e99;
+  position: relative;
+  transition: background-color 0.2s;  
+  display: flex;
+  align-items: center;
+}
+
+.version-switch.on {  
+  background: #28a745;
+}
+
+.version-switch.off {  
+  background: #dc3545;
+}
+
+.version-switch .version-switch-button {
+  position: absolute;
+  border-radius: 50%;
+  /* z-index: 1; */
+  /* top: 2%; */
+  left: 2px;
+  width: 45px;
+  height: 45px;
+  transition: 0.2s;
+  background: #fff;
+  box-shadow: 0 0 2px 0 rgba(10, 10, 10, 0.29);
+}
+
+.version-switch-checkbox:checked + .version-switch-button {
+  left: calc(100% - 2px);
+  transform: translateX(-100%);
+}
+
+.version-switch-checkbox:active + .version-switch-button {
+  width: 60px;
+}
+
+.version-switch-labels {
+  display: relative;
+  z-index: 0;
+  height: 100%;
+  font-size: 0.9rem !important;
+}
+
+.version-switch-labels span {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+  height: 100%;
+}
+.version-switch-labels span:first-child {
+  left: 0;
+}
+.version-switch-labels span:last-child {
+  right: 0;
+}
+
+.version-switch.off .version-switch-labels span:first-child {
+  display: none;
+}
+
+.version-switch.on .version-switch-labels span:last-child {
+  display: none;
+}
