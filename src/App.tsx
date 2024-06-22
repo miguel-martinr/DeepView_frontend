@@ -13,8 +13,8 @@ function App() {
         <Route path='/' element={<MainContainer />}>
           <Route path='/videos' element={<VideosPage />} />
           <Route path='/video/:name' element={<VideoPage />} />
-          <Route path='/*' element={<HomePage />} />
-          <Route path='/' element={<HomePage />} />
+          <Route path='/*' element={<VideosPage />} />
+          <Route path='/' element={<VideosPage />} />
         </Route>
       </Routes>
     </div>
