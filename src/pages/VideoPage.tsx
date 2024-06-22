@@ -15,8 +15,6 @@ import { Evaluator } from '../features/Evaluator/Evaluator';
 import { EventsCard } from '../features/Events/EventsCard';
 
 
-  type VideoPageMode = 'evaluation' | 'analysis';
-
 export const VideoPage = () => {
 
   const navigate = useNavigate();
@@ -258,13 +256,10 @@ export const VideoPage = () => {
                   </Row>
                 </>
                 :
-                <Evaluator
-                  videoId={videoId}
-                  videoName={video.name}
-                  videoFps={video.fps}
+                <Evaluator                  
+                  video={video}
                   statusWatcherRef={watcherRef}
                   watchStatusCallBack={watchStatus}
-                  videoMissing={video.video_missing}
                 />
             }
           </Col>
