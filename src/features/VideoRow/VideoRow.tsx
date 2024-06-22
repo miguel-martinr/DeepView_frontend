@@ -147,6 +147,7 @@ export const VideoRow = ({ name }: VideoRowProps) => {
               <Button
                 variant={video.status === 'processing' ? 'warning' : 'success'}
                 onClick={getProcessingHandler(video.status)}
+                disabled={video.video_missing}
               >
                 {video.status === 'processing' ? 'Detener' : 'Procesar'}
 
