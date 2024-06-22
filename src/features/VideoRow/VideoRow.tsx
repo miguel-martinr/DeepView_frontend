@@ -1,13 +1,19 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Button, Col, Row } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
+
 import { deepViewApi } from '../../api/api'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { setVideo, setVideoSpentSeconds } from '../../state/workspace-slice'
+
 import { VideoStatus } from '../../types/Video'
 import { StatusWatcher } from '../../utils/StatusWatcher'
 import { StatusButton } from '../StatusButton/StatusButton'
+import { ReprocessConfirmationModal } from '../ReprocessConfirmationModal/ReprocessConfirmationModal'
+
 import './Videos.css'
+import { set } from 'immer/dist/internal'
+import { useReprocess } from '../../state/hooks/useReprocess'
 
 interface VideoRowProps {
   name: string
@@ -28,7 +34,16 @@ No se ha encontrado un archivo de vídeo que corresponda con este nombre.
 Debido a esto, algunas características no están disponibles para los datos de este vídeo.
   `;
 
-  return <ChipWithTooltip label="Media no disponible | ?" tooltip={tooltip} />
+  const styles: React.CSSProperties = {
+    cursor: 'help'
+  }
+
+  return <div style={styles}>
+    <ChipWithTooltip
+      label="Media no disponible | ?"
+      tooltip={tooltip}
+    />
+  </div>
 }
 
 export const VideoRow = ({ name }: VideoRowProps) => {
@@ -66,7 +81,7 @@ export const VideoRow = ({ name }: VideoRowProps) => {
       wacthStatus();
       console.log(res);
     }).catch(err => alert(`Error al procesar vídeo :( -> ${err.message}`));
-  }
+  }  
 
   const handleStopProcessing = () => {
     deepViewApi.stopProcessing(video.name).then((res: any) => {
@@ -74,6 +89,13 @@ export const VideoRow = ({ name }: VideoRowProps) => {
       setStatus("stopped");
     });
   }
+
+  const { 
+    handleCancelReprocess, 
+    handleConfirmReprocess, 
+    getProcessingHandler,
+    showReprocessModal 
+  } = useReprocess({ handleProcess, handleStopProcessing });
 
   const wacthStatus = () => {
 
@@ -98,8 +120,11 @@ export const VideoRow = ({ name }: VideoRowProps) => {
 
   return (
     <Row className="video-row p-1 mt-1">
-
-      {/* d-flex flex-column justify-content-center  */}
+      <ReprocessConfirmationModal
+        isVisible={showReprocessModal}
+        onConfirm={handleConfirmReprocess}
+        onCancel={handleCancelReprocess}
+      />
       <Col>
         <Row>
           <Col>
@@ -121,7 +146,7 @@ export const VideoRow = ({ name }: VideoRowProps) => {
               <Button onClick={() => navigateToVideo()}>Abrir</Button>
               <Button
                 variant={video.status === 'processing' ? 'warning' : 'success'}
-                onClick={video.status === 'processing' ? handleStopProcessing : handleProcess}
+                onClick={getProcessingHandler(video.status)}
               >
                 {video.status === 'processing' ? 'Detener' : 'Procesar'}
 
