@@ -259,9 +259,12 @@ export const VideoPage = () => {
                 </>
                 :
                 <Evaluator
-                  video={video}
+                  videoId={videoId}
+                  videoName={video.name}
+                  videoFps={video.fps}
                   statusWatcherRef={watcherRef}
-                  watchStatusCallBack={watchStatus}                  
+                  watchStatusCallBack={watchStatus}
+                  videoMissing={video.video_missing}
                 />
             }
           </Col>
