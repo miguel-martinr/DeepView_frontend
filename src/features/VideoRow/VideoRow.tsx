@@ -33,7 +33,16 @@ No se ha encontrado un archivo de vídeo que corresponda con este nombre.
 Debido a esto, algunas características no están disponibles para los datos de este vídeo.
   `;
 
-  return <ChipWithTooltip label="Media no disponible | ?" tooltip={tooltip} />
+  const styles: React.CSSProperties = {
+    cursor: 'help'
+  }
+
+  return <div style={styles}>
+    <ChipWithTooltip 
+            label="Media no disponible | ?" 
+            tooltip={tooltip} 
+          />
+  </div>
 }
 
 export const VideoRow = ({ name }: VideoRowProps) => {
