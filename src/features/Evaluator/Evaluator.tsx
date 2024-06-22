@@ -4,7 +4,7 @@ import { deepViewApi } from '../../api/api';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { setVideoStatus } from '../../state/workspace-slice';
 import { defaultParameters, ProcessingParameters } from '../../types/Parameters';
-import { VideoStatus } from '../../types/Video';
+import { Video, VideoStatus } from '../../types/Video';
 import { useFormFields } from '../../utils/form-hook';
 import { mergeArrayOfObjects } from '../../utils/objects';
 import { StatusWatcher } from '../../utils/StatusWatcher';
@@ -12,15 +12,17 @@ import { FilterParameters, Parameter } from './FilterParameters';
 import { drawObjectInCanvas, ParticleObject } from '../../utils/Canvas';
 import { drawCurrentFrame } from '../../utils/Canvas/drawCurrentFrameInCanvas';
 import { getVideo } from '../../utils/Video';
+import { useReprocess } from '../../state/hooks/useReprocess';
+import { ReprocessConfirmationModal } from '../ReprocessConfirmationModal/ReprocessConfirmationModal';
 
 
 export interface EvaluatorProps {
-  videoId: string, // Html video element id 
-  videoName: string,
-  videoFps: number,
+  video: Video,  
+  // videoName: string,
+  // videoFps: number,
+  // videoMissing?: boolean
   statusWatcherRef: React.MutableRefObject<StatusWatcher>,
   watchStatusCallBack: () => void,
-  videoMissing?: boolean
 }
 
 
@@ -36,17 +38,15 @@ const tophatParameters: Parameter[] = [
 ]
 
 export const Evaluator = ({
-  videoName,
-  videoFps,
+  video,  
   statusWatcherRef,
   watchStatusCallBack: wacthStatus,
-  videoMissing }: EvaluatorProps) => {
+}: EvaluatorProps) => {
 
   // Useful hooks
   const dispatch = useAppDispatch();
 
   // Internal state  
-
   const statusWatcher = statusWatcherRef.current;
   const canvasId = 'frameCanvas';
 
@@ -61,7 +61,7 @@ export const Evaluator = ({
 
   // Effects
   useEffect(() => {
-    selectFrame()
+    !video.video_missing && selectFrame();
     fetchParametersForVideo()
   }, [])
 
@@ -73,11 +73,11 @@ export const Evaluator = ({
 
   const processFrame = () => {
 
-    const video = getVideo();
-    const frameIndex = Math.round(video.currentTime * videoFps) - 1;
+    const htmlVideo = getVideo();
+    const frameIndex = Math.round(htmlVideo.currentTime * video.fps) - 1;
     const params = getLocalProcessingParameters();
 
-    deepViewApi.processFrame(videoName, frameIndex, params)
+    deepViewApi.processFrame(video.name, frameIndex, params)
       .then((objects: ParticleObject[]) => {
         for (const object of objects)
           drawObjectInCanvas(object)
@@ -106,7 +106,7 @@ export const Evaluator = ({
 
   const saveParameters = () => {
     const parameters = getLocalProcessingParameters();
-    deepViewApi.saveParameters(videoName, parameters)
+    deepViewApi.saveParameters(video.name, parameters)
       .then((res) => {
         console.log(res.message);
       })
@@ -115,7 +115,7 @@ export const Evaluator = ({
 
 
   const fetchParametersForVideo = async () => {
-    const parameters = await deepViewApi.getParametersForVideo(videoName);
+    const parameters = await deepViewApi.getParametersForVideo(video.name);
 
     // Set parameters
     const { kernelWidth, kernelHeight } = parameters.preprocess.top_hat;
@@ -131,24 +131,36 @@ export const Evaluator = ({
   }
 
   const handleProcess = () => {
-    deepViewApi.processVideo(videoName).then((res: any) => {
+    deepViewApi.processVideo(video.name).then((res: any) => {
       statusWatcher.clear();
       statusWatcher.setCurrentStatus('processing');
       wacthStatus();
       updateVideoStatus('processing');
-      console.log(`Vídeo ${videoName} is being processed: ${res}`);
+      console.log(`Vídeo ${video.name} is being processed: ${res}`);
     }).catch(err => alert(`Error al procesar vídeo :( -> ${err.message}`));
   }
 
+  const {
+    handleCancelReprocess,
+    handleConfirmReprocess,
+    getProcessingHandler,
+    showReprocessModal
+  } = useReprocess({ handleProcess, handleStopProcessing: () => {} });
+
   const updateVideoStatus = (status: VideoStatus) => {
-    dispatch(setVideoStatus({ videoName, status }));
+    dispatch(setVideoStatus({ videoName: video.name, status }));
   }
 
   return (
     <>
       {
-        !videoMissing &&
+        !video.video_missing &&
         <>
+          <ReprocessConfirmationModal
+            isVisible={showReprocessModal}
+            onCancel={handleCancelReprocess}
+            onConfirm={handleConfirmReprocess}
+          />
           <Row className='mt-2'>
             <Col>
               <canvas width={635} height={357} id={canvasId} />
@@ -172,7 +184,7 @@ export const Evaluator = ({
               </Button>
               <Button
                 variant='warning'
-                onClick={() => { handleProcess() }}
+                onClick={getProcessingHandler(video.status)}
               >
                 Procesar vídeo
               </Button>
